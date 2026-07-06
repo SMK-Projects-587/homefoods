@@ -127,12 +127,44 @@ Signups are disabled everywhere; there is no self-service path.
 > Authentication → Sign In / Providers: *Allow new users to sign up* → **OFF**,
 > anonymous sign-ins → **OFF**, keep only Email enabled.
 
-## Storage
+## Storage: Cloudflare R2 + `r2-presign` edge function
 
-- `product-images` — public bucket: anyone can read, staff can write.
-  `categories.image_path` / `product_images.image_path` store object paths
-  (e.g. `products/avakaya-mango-pickle/main.jpg`), not URLs.
-- `invoices` — private bucket for future invoice PDFs: staff-only.
+Images and invoice PDFs live in **Cloudflare R2** (zero egress fees), not
+Supabase Storage. Two buckets, both APAC:
+
+- `homefoods-images` — product/category images. Will be public via an R2
+  custom domain once the domain is bought (no `r2.dev` URL enabled).
+  `image_path` columns store object keys (`products/<slug>/main.jpg`), never
+  URLs — the frontend builds URLs from `R2_PUBLIC_BASE_URL`.
+- `homefoods-invoices` — private invoice PDFs, presigned-URL access only.
+
+Browsers can't hold R2 credentials, so the **`r2-presign` edge function**
+(staff JWT required — same trust model) brokers all access:
+
+```
+POST /functions/v1/r2-presign   Authorization: Bearer <staff jwt>
+  {"action":"upload",   "bucket":"images|invoices", "key":"products/x/y.jpg"}
+     -> presigned PUT url (client uploads directly to R2)
+  {"action":"download", ...}  -> presigned GET url (private invoices; images pre-domain)
+  {"action":"delete",   ...}  -> deletes the object server-side
+```
+
+Secrets: copy the `R2_*` lines from `.env` into `supabase/functions/.env`
+(gitignored, auto-loaded by `supabase functions serve`); on the hosted
+project use `npx supabase secrets set` instead. Local serve:
+
+```bash
+npx supabase functions serve r2-presign
+```
+
+Image optimization plan (once the domain exists): keep one untouched master
+per image; serve via Cloudflare Image Transformations
+(`/cdn-cgi/image/width=...,format=auto/...`) with fixed srcset widths
+(320/640/960/1280/1920) to stay inside the free 5k-unique-transforms tier.
+
+Supabase Storage is not used at all (an early `storage` migration created
+buckets there, but it was removed before anything was pushed — R2 is the
+only object store).
 
 ## TODO (future work)
 
