@@ -3,6 +3,7 @@
 @theme inline {
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-body: var(--font-karla), ui-sans-serif, system-ui, sans-serif;
+  --font-telugu: var(--font-noto-telugu), var(--font-fraunces), serif;
 }
 
 @theme {
@@ -58,6 +59,14 @@
   ::selection {
     background-color: var(--color-chilli);
     color: var(--color-paper);
+  }
+}
+
+/* hide horizontal scrollbars on chip/category rails */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 

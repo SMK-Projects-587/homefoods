@@ -10,7 +10,7 @@ export default function QtyStepper({
   small?: boolean;
 }) {
   const btn = `grid cursor-pointer place-items-center border border-ink/30 transition-colors hover:bg-ink hover:text-paper ${
-    small ? "size-7 text-sm" : "size-10"
+    small ? "size-9 text-sm" : "size-11"
   }`;
   return (
     <div className="inline-flex items-center gap-2">

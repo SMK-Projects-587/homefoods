@@ -43,7 +43,7 @@ export default async function CategoryPage({
         / <span className="text-ink">{category.name}</span>
       </nav>
       <div className="mt-4 border-b-2 border-ink pb-8">
-        <h1 className="font-display text-6xl">{category.name}</h1>
+        <h1 className="font-display text-4xl sm:text-6xl">{category.name}</h1>
         {category.description && (
           <p className="mt-3 max-w-xl text-lg text-soft">
             {category.description}
@@ -61,7 +61,7 @@ export default async function CategoryPage({
           </p>
         </div>
       ) : (
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {products.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}

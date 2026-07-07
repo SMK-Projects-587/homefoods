@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import ProductCard from "@/components/product-card";
-import SearchBox from "@/components/search-box";
+import SearchBar from "@/components/search-bar";
 import { getCategories, getProducts, searchProducts } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
@@ -43,7 +43,7 @@ export default async function ProductsPage({
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
       <p className="label text-chilli">The pantry</p>
-      <h1 className="mt-2 font-display text-5xl">
+      <h1 className="mt-2 font-display text-4xl sm:text-5xl">
         {term ? (
           <>
             Looking for <em className="text-chilli">&ldquo;{term}&rdquo;</em>
@@ -60,7 +60,7 @@ export default async function ProductsPage({
       </p>
 
       <div className="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
           <Link href={withParams()} className={chip(!category)}>
             All
           </Link>
@@ -74,7 +74,7 @@ export default async function ProductsPage({
             </Link>
           ))}
         </div>
-        <SearchBox defaultValue={term} className="w-full md:w-64" />
+        <SearchBar defaultValue={term} className="hidden md:block md:w-72" />
       </div>
 
       {products.length === 0 ? (
@@ -91,7 +91,7 @@ export default async function ProductsPage({
           </p>
         </div>
       ) : (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {products.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}

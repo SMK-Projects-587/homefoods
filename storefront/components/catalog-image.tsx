@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { productImageUrl } from "@/lib/supabase";
 
 const TONES = [
@@ -63,10 +63,22 @@ export default function CatalogImage({
   className?: string;
 }) {
   const [errored, setErrored] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // Above-the-fold images can fail before hydration, so onError never fires.
+  // Catch that case by inspecting the already-settled element after mount.
+  useEffect(() => {
+    const el = imgRef.current;
+    if (el && el.complete && el.naturalWidth === 0) {
+      setErrored(true);
+    }
+  }, []);
+
   if (!path || errored) return <Placeholder name={name} className={className} />;
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
+      ref={imgRef}
       src={productImageUrl(path)}
       alt={alt}
       loading="lazy"

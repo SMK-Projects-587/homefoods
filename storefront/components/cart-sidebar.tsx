@@ -103,7 +103,7 @@ export default function CartSidebar() {
                     type="button"
                     aria-label={`Remove ${item.productName}`}
                     onClick={() => removeItem(item.variantId)}
-                    className="cursor-pointer self-start text-soft transition-colors hover:text-chilli"
+                    className="-mr-2 grid size-9 shrink-0 cursor-pointer place-items-center self-start text-lg text-soft transition-colors hover:text-chilli"
                   >
                     ×
                   </button>

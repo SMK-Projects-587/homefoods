@@ -11,9 +11,10 @@ export default function CartPage() {
     useCart();
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
+    // extra bottom padding on mobile clears the sticky checkout bar
+    <div className="mx-auto max-w-6xl px-4 pb-32 pt-8 sm:pt-12 lg:pb-12">
       <p className="label text-chilli">Your basket</p>
-      <h1 className="mt-2 font-display text-5xl">
+      <h1 className="mt-2 font-display text-4xl sm:text-5xl">
         {count > 0 ? `${count} ${count === 1 ? "jar" : "jars"} packed` : "Cart"}
       </h1>
 
@@ -35,10 +36,10 @@ export default function CartPage() {
           <div>
             <ul className="divide-y divide-line border-y border-line">
               {items.map((item) => (
-                <li key={item.variantId} className="flex gap-5 py-5">
+                <li key={item.variantId} className="flex gap-4 py-5 sm:gap-5">
                   <Link
                     href={`/products/${item.productSlug}`}
-                    className="block size-24 shrink-0 overflow-hidden border border-line"
+                    className="block size-20 shrink-0 overflow-hidden border border-line sm:size-24"
                   >
                     <CatalogImage
                       path={item.imagePath}
@@ -73,7 +74,7 @@ export default function CartPage() {
                       </button>
                     </div>
                   </div>
-                  <span className="font-bold">
+                  <span className="text-sm font-bold sm:text-base">
                     {formatINR(item.price * item.qty)}
                   </span>
                 </li>
@@ -121,6 +122,24 @@ export default function CartPage() {
               in this browser.
             </p>
           </aside>
+
+          {/* Mobile: sticky checkout bar (intentionally a no-op, like above). */}
+          <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-paper px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
+            <div className="flex items-center gap-4">
+              <div>
+                <p className="label text-soft">Subtotal</p>
+                <p className="font-display text-2xl leading-none">
+                  {formatINR(subtotal)}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="label flex-1 cursor-pointer bg-chilli py-4 text-paper transition-colors hover:bg-chilli-deep"
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Karla } from "next/font/google";
+import { Fraunces, Karla, Noto_Serif_Telugu } from "next/font/google";
 import "./globals.css";
 import { getCategories } from "@/lib/catalog";
 import { CartProvider } from "@/lib/cart";
@@ -19,6 +19,13 @@ const karla = Karla({
   variable: "--font-karla",
 });
 
+// For the Telugu accents (ఇంటి రుచి) — system fallbacks are unreliable.
+const notoTelugu = Noto_Serif_Telugu({
+  subsets: ["telugu"],
+  weight: ["400", "600"],
+  variable: "--font-noto-telugu",
+});
+
 export const metadata: Metadata = {
   title: {
     default: "HomeFoods — Andhra pickles, podis, snacks & sweets",
@@ -35,7 +42,10 @@ export default async function RootLayout({
 }>) {
   const categories = await getCategories();
   return (
-    <html lang="en" className={`${fraunces.variable} ${karla.variable}`}>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${karla.variable} ${notoTelugu.variable}`}
+    >
       <body className="font-body antialiased">
         <CartProvider>
           <Header categories={categories} />

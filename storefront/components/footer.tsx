@@ -13,6 +13,9 @@ export default function Footer({ categories }: { categories: Category[] }) {
             Pickles, podis, snacks and sweets made in small batches, the way
             they&rsquo;ve always been made at home.
           </p>
+          <p className="font-telugu mt-4 text-turmeric-soft">
+            ఇంటి రుచి, ప్రేమతో.
+          </p>
         </div>
         <div>
           <p className="label text-turmeric">Shop</p>

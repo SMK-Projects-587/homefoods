@@ -37,103 +37,129 @@ export default function BuyBox({
 
   const lowStock = selected.in_stock && selected.stock > 0 && selected.stock <= 8;
 
+  const addToCart = () =>
+    addItem(
+      {
+        variantId: selected.id,
+        productId,
+        productSlug,
+        productName,
+        variantTitle: selected.title,
+        price: selected.price,
+        imagePath,
+      },
+      qty,
+    );
+
   return (
-    <div className="border-2 border-ink bg-paper p-5">
-      <div className="flex flex-wrap items-baseline gap-3">
-        <span className="font-display text-4xl">{formatINR(selected.price)}</span>
-        {selected.compare_at_price != null && (
-          <>
-            <s className="text-lg text-soft">
-              {formatINR(selected.compare_at_price)}
-            </s>
-            <span className="label bg-turmeric px-2 py-1 text-ink">
-              Save {formatINR(selected.compare_at_price - selected.price)}
+    <>
+      <div className="border-2 border-ink bg-paper p-5">
+        <div className="flex flex-wrap items-baseline gap-3">
+          <span className="font-display text-4xl">{formatINR(selected.price)}</span>
+          {selected.compare_at_price != null && (
+            <>
+              <s className="text-lg text-soft">
+                {formatINR(selected.compare_at_price)}
+              </s>
+              <span className="label bg-turmeric px-2 py-1 text-ink">
+                Save {formatINR(selected.compare_at_price - selected.price)}
+              </span>
+            </>
+          )}
+        </div>
+
+        <p className="mt-1 text-sm">
+          {!selected.in_stock ? (
+            <span className="font-bold text-chilli">Out of stock</span>
+          ) : lowStock ? (
+            <span className="font-bold text-chilli">
+              Only {selected.stock} left
             </span>
-          </>
-        )}
-      </div>
+          ) : (
+            <span className="text-leaf">In stock</span>
+          )}
+          <span className="ml-2 text-xs text-soft">SKU {selected.sku}</span>
+        </p>
 
-      <p className="mt-1 text-sm">
-        {!selected.in_stock ? (
-          <span className="font-bold text-chilli">Out of stock</span>
-        ) : lowStock ? (
-          <span className="font-bold text-chilli">
-            Only {selected.stock} left
-          </span>
-        ) : (
-          <span className="text-leaf">In stock</span>
+        {variants.length > 1 && (
+          <fieldset className="mt-5">
+            <legend className="label text-soft">Size</legend>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {variants.map((v) => (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedId(v.id);
+                    setQty(1);
+                  }}
+                  className={`cursor-pointer border px-4 py-2.5 text-sm font-bold transition-colors ${
+                    v.id === selected.id
+                      ? "border-ink bg-ink text-paper"
+                      : "border-ink/30 hover:border-ink"
+                  } ${!v.in_stock ? "opacity-50" : ""}`}
+                >
+                  {v.title}
+                  {!v.in_stock && " · sold out"}
+                </button>
+              ))}
+            </div>
+          </fieldset>
         )}
-        <span className="ml-2 text-xs text-soft">SKU {selected.sku}</span>
-      </p>
 
-      {variants.length > 1 && (
-        <fieldset className="mt-5">
-          <legend className="label text-soft">Size</legend>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {variants.map((v) => (
-              <button
-                key={v.id}
-                type="button"
-                onClick={() => {
-                  setSelectedId(v.id);
-                  setQty(1);
-                }}
-                className={`cursor-pointer border px-4 py-2 text-sm font-bold transition-colors ${
-                  v.id === selected.id
-                    ? "border-ink bg-ink text-paper"
-                    : "border-ink/30 hover:border-ink"
-                } ${!v.in_stock ? "opacity-50" : ""}`}
-              >
-                {v.title}
-                {!v.in_stock && " · sold out"}
-              </button>
-            ))}
+        <div className="mt-6 flex items-center gap-4">
+          <div className="inline-flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Decrease quantity"
+              onClick={() => setQty((q) => Math.max(1, q - 1))}
+              className="grid size-11 cursor-pointer place-items-center border border-ink/30 hover:bg-ink hover:text-paper"
+            >
+              −
+            </button>
+            <span className="w-8 text-center font-bold">{qty}</span>
+            <button
+              type="button"
+              aria-label="Increase quantity"
+              onClick={() => setQty((q) => q + 1)}
+              className="grid size-11 cursor-pointer place-items-center border border-ink/30 hover:bg-ink hover:text-paper"
+            >
+              +
+            </button>
           </div>
-        </fieldset>
-      )}
-
-      <div className="mt-6 flex items-center gap-4">
-        <div className="inline-flex items-center gap-2">
           <button
             type="button"
-            aria-label="Decrease quantity"
-            onClick={() => setQty((q) => Math.max(1, q - 1))}
-            className="grid size-11 cursor-pointer place-items-center border border-ink/30 hover:bg-ink hover:text-paper"
+            disabled={!selected.in_stock}
+            onClick={addToCart}
+            className="label flex-1 cursor-pointer bg-chilli py-4 text-paper transition-colors hover:bg-chilli-deep disabled:cursor-not-allowed disabled:bg-soft"
           >
-            −
-          </button>
-          <span className="w-8 text-center font-bold">{qty}</span>
-          <button
-            type="button"
-            aria-label="Increase quantity"
-            onClick={() => setQty((q) => q + 1)}
-            className="grid size-11 cursor-pointer place-items-center border border-ink/30 hover:bg-ink hover:text-paper"
-          >
-            +
+            {selected.in_stock ? "Add to basket" : "Sold out"}
           </button>
         </div>
-        <button
-          type="button"
-          disabled={!selected.in_stock}
-          onClick={() =>
-            addItem(
-              {
-                variantId: selected.id,
-                productId,
-                productSlug,
-                productName,
-                variantTitle: selected.title,
-                price: selected.price,
-                imagePath,
-              },
-              qty,
-            )
-          }
-          className="label flex-1 cursor-pointer bg-chilli py-4 text-paper transition-colors hover:bg-chilli-deep disabled:cursor-not-allowed disabled:bg-soft"
-        >
-          {selected.in_stock ? "Add to basket" : "Sold out"}
-        </button>
       </div>
-    </div>
+
+      {/* Mobile: sticky buy bar so the price and CTA travel with the thumb. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-paper px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
+        <div className="mx-auto flex max-w-6xl items-center gap-4">
+          <div className="min-w-0">
+            <p className="font-display text-2xl leading-none">
+              {formatINR(selected.price * qty)}
+            </p>
+            <p className="mt-1 truncate text-xs text-soft">
+              {selected.title}
+              {qty > 1 && ` × ${qty}`}
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={!selected.in_stock}
+            onClick={addToCart}
+            className="label flex-1 cursor-pointer bg-chilli py-4 text-paper transition-colors hover:bg-chilli-deep disabled:cursor-not-allowed disabled:bg-soft"
+          >
+            {selected.in_stock ? "Add to basket" : "Sold out"}
+          </button>
+        </div>
+      </div>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CatalogImage from "./catalog-image";
+import VegMark from "./veg-mark";
 import { formatINR } from "@/lib/format";
 import type { ProductCardData } from "@/lib/catalog";
 
@@ -16,23 +17,26 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
           name={product.name}
           className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        <VegMark className="absolute right-2 top-2" />
         {!product.inStock && (
-          <span className="label absolute left-3 top-3 bg-ink px-2 py-1 text-paper">
+          <span className="label absolute left-2 top-2 bg-ink px-2 py-1 text-paper">
             Sold out
           </span>
         )}
         {product.inStock && product.compareAtPrice != null && (
-          <span className="label absolute left-3 top-3 bg-turmeric px-2 py-1 text-ink">
+          <span className="label absolute left-2 top-2 bg-turmeric px-2 py-1 text-ink">
             Offer
           </span>
         )}
       </div>
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         {product.categoryName && (
           <p className="label text-soft">{product.categoryName}</p>
         )}
-        <h3 className="mt-1 font-display text-xl leading-snug">{product.name}</h3>
-        <div className="mt-2 flex items-baseline gap-2">
+        <h3 className="mt-1 font-display text-lg leading-snug sm:text-xl">
+          {product.name}
+        </h3>
+        <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
           {product.price != null && (
             <span className="font-bold">{formatINR(product.price)}</span>
           )}

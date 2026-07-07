@@ -1,6 +1,8 @@
 import Link from "next/link";
 import CatalogImage from "@/components/catalog-image";
 import ProductCard from "@/components/product-card";
+import SearchBar from "@/components/search-bar";
+import VegMark from "@/components/veg-mark";
 import { getCategories, getProducts } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
@@ -28,13 +30,16 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 md:grid-cols-[3fr_2fr] md:py-20">
+      <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-10 md:grid-cols-[3fr_2fr] md:py-20">
         <div>
           <p className="label animate-rise text-chilli">
-            From our kitchen in Guntur
+            <span className="font-telugu text-sm normal-case tracking-normal">
+              ఇంటి రుచి
+            </span>{" "}
+            · from our kitchen in Guntur
           </p>
           <h1
-            className="mt-4 animate-rise font-display text-5xl leading-[1.05] sm:text-6xl lg:text-7xl"
+            className="mt-4 animate-rise font-display text-4xl leading-[1.05] sm:text-6xl lg:text-7xl"
             style={{ animationDelay: "80ms" }}
           >
             Pickles with a<br />
@@ -50,8 +55,26 @@ export default async function HomePage() {
             batches — then packed into jars the day you order.
           </p>
           <div
+            className="mt-8 hidden max-w-md animate-rise md:block"
+            style={{ animationDelay: "220ms" }}
+          >
+            <SearchBar variant="hero" />
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="label text-soft">Popular:</span>
+              {["Avakaya", "Karam podi", "Gongura", "Kaju katli"].map((t) => (
+                <Link
+                  key={t}
+                  href={`/products?q=${encodeURIComponent(t)}`}
+                  className="rounded-full border border-ink/30 px-3 py-1 text-xs font-bold transition-colors hover:border-chilli hover:text-chilli"
+                >
+                  {t}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div
             className="mt-8 flex animate-rise flex-wrap items-center gap-4"
-            style={{ animationDelay: "240ms" }}
+            style={{ animationDelay: "300ms" }}
           >
             <Link
               href="/products"
@@ -104,6 +127,19 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* Trust strip */}
+      <div className="border-b-2 border-ink bg-paper">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 py-3">
+          <span className="flex items-center gap-2">
+            <VegMark />
+            <span className="label">100% vegetarian</span>
+          </span>
+          <span className="label text-soft">No preservatives</span>
+          <span className="label text-soft">Made to order</span>
+          <span className="label text-soft">Ships across India</span>
+        </div>
+      </div>
+
       {/* Categories */}
       <section className="mx-auto max-w-6xl px-4 py-16">
         <div className="flex items-baseline justify-between">
@@ -112,12 +148,12 @@ export default async function HomePage() {
             Everything →
           </Link>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="no-scrollbar -mx-4 mt-8 grid snap-x snap-mandatory grid-flow-col auto-cols-[72%] gap-4 overflow-x-auto px-4 sm:mx-0 sm:grid-flow-row sm:auto-cols-auto sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4">
           {categories.map((c, i) => (
             <Link
               key={c.id}
               href={`/category/${c.slug}`}
-              className="group border border-line bg-paper transition-all duration-300 hover:-translate-y-1 hover:border-ink/40 hover:shadow-[6px_6px_0_0_var(--color-cream)]"
+              className="group snap-start border border-line bg-paper transition-all duration-300 hover:-translate-y-1 hover:border-ink/40 hover:shadow-[6px_6px_0_0_var(--color-cream)]"
             >
               <div className="aspect-4/3 overflow-hidden border-b border-line">
                 <CatalogImage
@@ -149,7 +185,7 @@ export default async function HomePage() {
             Shop all →
           </Link>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
@@ -164,7 +200,10 @@ export default async function HomePage() {
             oil and the patience to let a jar sit in the sun.&rdquo;
           </p>
           <footer className="label mt-6 text-soft">
-            The HomeFoods kitchen
+            <span className="font-telugu normal-case tracking-normal">
+              ఇంటి రుచి
+            </span>{" "}
+            · The HomeFoods kitchen
           </footer>
         </blockquote>
       </section>

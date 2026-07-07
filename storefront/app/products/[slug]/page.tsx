@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import BuyBox from "@/components/buy-box";
 import CatalogImage from "@/components/catalog-image";
 import ProductCard from "@/components/product-card";
+import VegMark from "@/components/veg-mark";
 import { getProductBySlug, getProducts } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,8 @@ export default async function ProductPage({
     : [];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
+    // extra bottom padding on mobile clears the sticky buy bar
+    <div className="mx-auto max-w-6xl px-4 pb-32 pt-8 sm:pt-12 lg:pb-12">
       <nav className="label text-soft">
         <Link href="/" className="hover:text-chilli">
           Home
@@ -94,9 +96,12 @@ export default async function ProductPage({
           {product.category && (
             <p className="label text-chilli">{product.category.name}</p>
           )}
-          <h1 className="mt-2 font-display text-5xl leading-tight">
+          <h1 className="mt-2 font-display text-3xl leading-tight sm:text-5xl">
             {product.name}
           </h1>
+          <p className="mt-3 flex items-center gap-2 text-sm font-bold text-leaf">
+            <VegMark /> 100% vegetarian · homemade in Guntur
+          </p>
           {product.description && (
             <p className="mt-4 text-lg text-soft">{product.description}</p>
           )}
@@ -132,7 +137,7 @@ export default async function ProductPage({
           <h2 className="font-display text-3xl">
             More from {product.category!.name}
           </h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
