@@ -92,6 +92,24 @@ Notable triggers (each commented in its migration):
 
 ## Commands
 
+Day-to-day work goes through the Makefile (it papers over the local-stack
+gotchas: the edge runtime container staying stopped after `supabase start`,
+`db reset` wiping auth users, functions needing their own secrets file):
+
+```bash
+make up          # start everything: stack, edge runtime, functions env, staff user, smoke test
+make down        # stop the stack
+make restart     # stop+start (needed after config.toml / functions/.env changes)
+make reset       # replay migrations + seed, recreate staff user, smoke test
+make status      # stack + edge runtime state
+make smoke       # REST / RLS / search / edge-function health check
+make staff-user  # (re)create local staff login (staff@homefoods.test / local-dev-password-1)
+make types       # regenerate types/database.types.ts
+make migration name=add_thing   # new migration file
+```
+
+The underlying CLI, if you need it directly:
+
 ```bash
 npx supabase start        # start local stack (Docker)
 npx supabase stop         # stop it (config.toml changes need stop+start)
