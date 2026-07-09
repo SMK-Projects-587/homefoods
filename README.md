@@ -23,6 +23,13 @@ RLS policies are deliberately flat (`authenticated` = full access) because of
 this model. If customer accounts are ever introduced, rewrite
 `20260705191531_rls_policies.sql`'s successors — don't patch.
 
+**Nothing is ever deleted.** Categories, products, orders, invoices and
+invoice counters cannot be DELETEd by staff (privilege revoked + RLS, see
+`..._deletion_protection.sql`): deactivate catalog records (`is_active`),
+cancel orders, void invoices. Variants, images and order items stay
+deletable (routine data entry; order history survives via snapshots). The
+service key retains DELETE as a deliberate owner-only escape hatch.
+
 ## Directory layout
 
 ```

@@ -101,7 +101,10 @@ smoke: ## Quick health check: REST, RLS, search RPC, edge function auth gate
 	if [ $$fail -eq 0 ]; then echo "SMOKE OK"; else echo "SMOKE FAILED"; exit 1; fi
 
 types: ## Regenerate types/database.types.ts from the local schema
-	npx supabase gen types typescript --local > types/database.types.ts
+	@# SUPABASE_DB_PASSWORD is pinned because the CLI auto-loads .env, where the
+	@# hosted-project placeholder (empty until Phase 5) would otherwise shadow
+	@# the local stack's fixed password and break the typegen container.
+	SUPABASE_DB_PASSWORD=postgres npx supabase gen types typescript --local > types/database.types.ts
 	@echo "types/database.types.ts updated"
 
 migration: ## New migration file: make migration name=add_thing

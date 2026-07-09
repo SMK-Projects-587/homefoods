@@ -40,6 +40,7 @@ export type Database = {
           description: string
           id: number
           image_path: string
+          is_active: boolean
           name: string
           slug: string
           updated_at: string
@@ -49,6 +50,7 @@ export type Database = {
           description?: string
           id?: never
           image_path?: string
+          is_active?: boolean
           name: string
           slug: string
           updated_at?: string
@@ -58,6 +60,7 @@ export type Database = {
           description?: string
           id?: never
           image_path?: string
+          is_active?: boolean
           name?: string
           slug?: string
           updated_at?: string
