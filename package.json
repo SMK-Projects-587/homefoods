@@ -2,8 +2,18 @@
   "name": "homefoods-new",
   "version": "1.0.0",
   "description": "HomeFoods Supabase backend + Cloudflare R2 tooling",
-  "scripts": {},
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:status": "supabase status",
+    "functions:env": "bash scripts/sync-function-env.sh",
+    "functions:serve": "supabase functions serve r2-presign",
+    "types": "supabase gen types typescript --local > types/database.types.ts"
+  },
   "devDependencies": {
+    "supabase": "2.109.0",
     "wrangler": "4.107.0"
   },
   "private": true

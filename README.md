@@ -7,6 +7,10 @@ application server**: the entire backend is versioned SQL migrations, and the
 future React admin dashboard talks to Supabase directly via
 PostgREST/supabase-js.
 
+> **New machine?** `npm run setup` bootstraps everything (pinned supabase
+> CLI, env files, local stack with all migrations + seed). See
+> [SETUP.md](./SETUP.md) for prerequisites and the manual-secrets checklist.
+
 ## Trust model — read this first
 
 - **Every authenticated user is staff/admin.** There are no customer
@@ -115,7 +119,14 @@ make types       # regenerate types/database.types.ts
 make migration name=add_thing   # new migration file
 ```
 
+The supabase CLI is a pinned devDependency (`npm ci` installs it), so `npx
+supabase` below always resolves to the same version on every machine — never
+a global/`npx`-latest CLI. The same commands are also wrapped as npm scripts
+(`npm run db:start`, `db:reset`, `db:status`, `functions:serve`, `types` —
+see `package.json`) if you'd rather skip the Makefile.
+
 The underlying CLI, if you need it directly:
+
 
 ```bash
 npx supabase start        # start local stack (Docker)
@@ -174,9 +185,10 @@ POST /functions/v1/r2-presign   Authorization: Bearer <staff jwt>
   {"action":"delete",   ...}  -> deletes the object server-side
 ```
 
-Secrets: copy the `R2_*` lines from `.env` into `supabase/functions/.env`
-(gitignored, auto-loaded by `supabase functions serve`); on the hosted
-project use `npx supabase secrets set` instead. Local serve:
+Secrets: `npm run functions:env` copies the `R2_*` lines from `.env` into
+`supabase/functions/.env` (gitignored, auto-loaded by `supabase functions
+serve`); on the hosted project use `npx supabase secrets set` instead. Local
+serve:
 
 ```bash
 npx supabase functions serve r2-presign
