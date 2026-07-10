@@ -50,9 +50,12 @@ export type ProductDetail = {
   images: ImageRow[];
 };
 
+// product_variants!inner: a product with zero caller-visible active variants
+// (RLS hides variants of inactive products, and all-inactive variants) has
+// nothing to sell — never fetch it.
 const CARD_SELECT = `id, slug, name,
   category:categories(name, slug),
-  variants:product_variants(price, compare_at_price, in_stock, is_default),
+  variants:product_variants!inner(price, compare_at_price, in_stock, is_default),
   images:product_images(image_path, is_primary, sort_order)`;
 
 type CardRow = {
@@ -131,7 +134,7 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
     .select(
       `id, slug, name, description, keywords, meta_title, meta_description,
        category:categories(name, slug),
-       variants:product_variants(id, title, sku, attributes, price, compare_at_price, stock, in_stock, is_default),
+       variants:product_variants!inner(id, title, sku, attributes, price, compare_at_price, stock, in_stock, is_default),
        images:product_images(id, image_path, alt_text, is_primary, sort_order)`,
     )
     .eq("slug", slug)
@@ -157,6 +160,7 @@ export async function searchProducts(
     term,
     category_slug: opts?.categorySlug,
     max_results: opts?.limit ?? 48,
+    require_variant: true,
   });
   if (error) throw error;
   return data.map((row) => ({

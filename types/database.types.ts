@@ -433,6 +433,7 @@ export type Database = {
           in_stock_filter?: boolean
           max_results?: number
           offset_by?: number
+          require_variant?: boolean
           term: string
         }
         Returns: {
