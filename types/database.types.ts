@@ -520,6 +520,32 @@ export type Database = {
         Args: { source_name: string; tbl: unknown }
         Returns: string
       }
+      issue_invoice: {
+        Args: { p_order_id: number }
+        Returns: {
+          billing_address: Json
+          billing_name: string
+          created_at: string
+          discount: number
+          id: number
+          invoice_number: string
+          issued_at: string | null
+          line_items: Json
+          order_id: number
+          pdf_key: string
+          status: string
+          subtotal: number
+          tax: number
+          total: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "invoices"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       log_search: {
         Args: { p_result_count: number; p_term: string }
         Returns: undefined

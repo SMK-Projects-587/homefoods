@@ -41,7 +41,15 @@
 //     R2_BUCKET_INVOICES.
 
 import { createClient } from "@supabase/supabase-js";
-import { AwsClient } from "aws4fetch";
+import {
+  env,
+  getDriver,
+  localAdmin,
+  r2Client,
+  r2ObjectUrl,
+  toPublicUrl,
+  type Bucket,
+} from "../_shared/storage-driver.ts";
 
 const EXPIRES_SECONDS = 600;
 
@@ -59,18 +67,16 @@ function json(status: number, body: unknown): Response {
   });
 }
 
-function env(name: string): string {
-  const value = Deno.env.get(name);
-  if (!value) throw new Error(`Missing required secret: ${name}`);
-  return value;
-}
-
 // Object keys are built by the dashboard (e.g. products/<slug>/<uuid>.webp).
 // Reject anything that could escape or surprise: traversal, leading slashes,
 // exotic characters. Image keys must also live under a known prefix so the
 // bucket stays organized.
 const KEY_PATTERN = /^[a-z0-9][a-zA-Z0-9/_.-]{1,200}$/;
 const IMAGE_PREFIXES = ["products/", "categories/"];
+
+function isBucket(bucket: string): bucket is Bucket {
+  return bucket === "images" || bucket === "invoices";
+}
 
 function validateKey(bucket: string, key: string): string | null {
   if (!KEY_PATTERN.test(key) || key.includes("..") || key.includes("//")) {
@@ -91,22 +97,9 @@ type SignResult = {
 
 // ---- local driver: Supabase Storage ----
 
-function localAdmin() {
-  return createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"));
-}
-
-// SUPABASE_URL inside the edge runtime is the internal Docker network
-// address (http://kong:8000) — right for the server-to-server calls below,
-// but useless as a URL handed back to a browser or curl on the host. Swap
-// in the host-reachable origin for anything we return to the caller.
-function toPublicUrl(url: string): string {
-  const u = new URL(url);
-  return `${env("LOCAL_PUBLIC_URL")}${u.pathname}${u.search}`;
-}
-
 async function signLocal(
   action: SignAction,
-  bucket: string,
+  bucket: Bucket,
   key: string,
 ): Promise<SignResult> {
   const store = localAdmin().storage.from(bucket);
@@ -135,33 +128,16 @@ async function signLocal(
   };
 }
 
-async function deleteLocal(bucket: string, key: string): Promise<void> {
+async function deleteLocal(bucket: Bucket, key: string): Promise<void> {
   const { error } = await localAdmin().storage.from(bucket).remove([key]);
   if (error) throw new Error(`local storage delete failed: ${error.message}`);
 }
 
 // ---- r2 driver: Cloudflare R2 (production) ----
 
-function r2Client(): AwsClient {
-  return new AwsClient({
-    accessKeyId: env("R2_ACCESS_KEY_ID"),
-    secretAccessKey: env("R2_SECRET_ACCESS_KEY"),
-    service: "s3",
-    region: "auto",
-  });
-}
-
-function r2ObjectUrl(bucket: string, key: string): URL {
-  const buckets: Record<string, string> = {
-    images: env("R2_BUCKET_IMAGES"),
-    invoices: env("R2_BUCKET_INVOICES"),
-  };
-  return new URL(`${env("R2_S3_ENDPOINT")}/${buckets[bucket]}/${key}`);
-}
-
 async function signR2(
   action: SignAction,
-  bucket: string,
+  bucket: Bucket,
   key: string,
 ): Promise<SignResult> {
   const method = action === "upload" ? "PUT" : "GET";
@@ -173,7 +149,7 @@ async function signR2(
   return { url: signed.url, method, expires_in: EXPIRES_SECONDS };
 }
 
-async function deleteR2(bucket: string, key: string): Promise<void> {
+async function deleteR2(bucket: Bucket, key: string): Promise<void> {
   const res = await r2Client().fetch(r2ObjectUrl(bucket, key).toString(), {
     method: "DELETE",
   });
@@ -211,16 +187,18 @@ Deno.serve(async (req) => {
 
   // Validate all input before touching secrets, so bad requests get a real
   // 400 even when the R2 env is missing/misconfigured.
-  if (bucket !== "images" && bucket !== "invoices") {
+  if (!bucket || !isBucket(bucket)) {
     return json(400, { error: 'bucket must be "images" or "invoices"' });
   }
   if (!key) return json(400, { error: "key is required" });
   const keyError = validateKey(bucket, key);
   if (keyError) return json(400, { error: keyError });
 
-  const driver = env("STORAGE_DRIVER");
-  if (driver !== "local" && driver !== "r2") {
-    return json(500, { error: `unknown STORAGE_DRIVER: "${driver}"` });
+  let driver;
+  try {
+    driver = getDriver();
+  } catch (err) {
+    return json(500, { error: err instanceof Error ? err.message : "bad STORAGE_DRIVER" });
   }
 
   try {
