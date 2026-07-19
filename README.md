@@ -163,45 +163,59 @@ Signups are disabled everywhere; there is no self-service path.
 > Authentication → Sign In / Providers: *Allow new users to sign up* → **OFF**,
 > anonymous sign-ins → **OFF**, keep only Email enabled.
 
-## Storage: Cloudflare R2 + `r2-presign` edge function
+## Storage: local Supabase Storage (dev) / Cloudflare R2 (prod) + `r2-presign`
 
-Images and invoice PDFs live in **Cloudflare R2** (zero egress fees), not
-Supabase Storage. Two buckets, both APAC:
+Images and invoice PDFs are **not** stored in the database. `image_path`
+columns store object keys (`products/<slug>/main.jpg`), never URLs. Where
+those keys actually live differs by environment, selected by the
+`STORAGE_DRIVER` secret read by the `r2-presign` edge function:
 
-- `homefoods-images` — product/category images. Will be public via an R2
-  custom domain once the domain is bought (no `r2.dev` URL enabled).
-  `image_path` columns store object keys (`products/<slug>/main.jpg`), never
-  URLs — the frontend builds URLs from `R2_PUBLIC_BASE_URL`.
-- `homefoods-invoices` — private invoice PDFs, presigned-URL access only.
+- **Local (`STORAGE_DRIVER=local`, the default — see `functions-env`
+  below):** the `images` and `invoices` buckets declared in
+  `supabase/config.toml`, served by the `storage-api` container that's
+  already part of `supabase start`. Zero Cloudflare setup needed to develop.
+  `images` is a **public** bucket — reads are plain, unsigned GETs, no staff
+  auth involved. `invoices` stays private.
+- **Production (`STORAGE_DRIVER=r2`):** **Cloudflare R2** (zero egress
+  fees), two buckets, both APAC: `homefoods-images` (will be public via an
+  R2 custom domain once bought — no `r2.dev` URL enabled) and
+  `homefoods-invoices` (private, presigned-URL access only). **Not set up
+  yet** — see [TODO.md](./TODO.md) for what's left before this can go live.
 
-Browsers can't hold R2 credentials, so the **`r2-presign` edge function**
-(staff JWT required — same trust model) brokers all access:
+Either way, browsers can't hold storage credentials directly, so the
+**`r2-presign` edge function** (staff JWT required — same trust model)
+brokers upload/delete for both buckets, and download for the private one:
 
 ```
 POST /functions/v1/r2-presign   Authorization: Bearer <staff jwt>
   {"action":"upload",   "bucket":"images|invoices", "key":"products/x/y.jpg"}
-     -> presigned PUT url (client uploads directly to R2)
-  {"action":"download", ...}  -> presigned GET url (private invoices; images pre-domain)
+     -> presigned PUT url (client uploads directly to storage)
+  {"action":"download", ...}  -> signed GET url for invoices; for the public
+                                  images bucket, a plain unsigned URL instead
   {"action":"delete",   ...}  -> deletes the object server-side
 ```
 
-Secrets: `npm run functions:env` copies the `R2_*` lines from `.env` into
+Once a public base URL exists for images (locally: the Storage public
+object route; in prod: `R2_PUBLIC_BASE_URL` after the domain is connected),
+the frontend can build image URLs directly and skip calling `r2-presign` for
+image reads entirely — it's only required for uploads, deletes, and
+invoice downloads.
+
+Secrets: `npm run functions:env` (or `make functions-env`) writes
 `supabase/functions/.env` (gitignored, auto-loaded by `supabase functions
-serve`); on the hosted project use `npx supabase secrets set` instead. Local
-serve:
+serve`) with `STORAGE_DRIVER=local` plus any `R2_*` lines found in `.env`
+(only needed if you want to test the `r2` driver locally against real R2
+credentials). On the hosted project, `STORAGE_DRIVER=r2` and the `R2_*`
+secrets are set via `npx supabase secrets set` — see TODO.md. Local serve:
 
 ```bash
 npx supabase functions serve r2-presign
 ```
 
-Image optimization plan (once the domain exists): keep one untouched master
-per image; serve via Cloudflare Image Transformations
+Image optimization plan (once the R2 domain exists): keep one untouched
+master per image; serve via Cloudflare Image Transformations
 (`/cdn-cgi/image/width=...,format=auto/...`) with fixed srcset widths
 (320/640/960/1280/1920) to stay inside the free 5k-unique-transforms tier.
-
-Supabase Storage is not used at all (an early `storage` migration created
-buckets there, but it was removed before anything was pushed — R2 is the
-only object store).
 
 ## TODO (future work)
 

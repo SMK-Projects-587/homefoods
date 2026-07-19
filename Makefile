@@ -6,8 +6,8 @@ SHELL := /bin/bash
 
 # Local-only staff login used for development and smoke tests. Override:
 #   make staff-user STAFF_EMAIL=me@x.com STAFF_PASSWORD=secret
-STAFF_EMAIL    ?= staff@homefoods.test
-STAFF_PASSWORD ?= local-dev-password-1
+STAFF_EMAIL    ?= root@local.com
+STAFF_PASSWORD ?= root
 
 EDGE_CONTAINER := supabase_edge_runtime_homefoods-new
 API            := http://127.0.0.1:54321
@@ -23,8 +23,8 @@ help: ## Show this help
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 up: ## Start the local stack, edge runtime, functions env, staff user — the one command
-	npx supabase start
 	@$(MAKE) --no-print-directory functions-env
+	npx supabase start
 	@$(MAKE) --no-print-directory ensure-edge
 	@$(MAKE) --no-print-directory staff-user
 	@$(MAKE) --no-print-directory smoke
@@ -60,15 +60,14 @@ ensure-edge:
 	    || echo "WARNING: $(EDGE_CONTAINER) does not exist yet; run 'make restart'"; \
 	fi
 
-functions-env: ## Sync R2_* secrets from .env into supabase/functions/.env
-	@if [ ! -f .env ]; then \
-	  echo "WARNING: no .env file — copy .env.example and fill it in"; \
-	elif ! grep -qE '^R2_ACCESS_KEY_ID=..+' .env; then \
-	  echo "WARNING: R2_ACCESS_KEY_ID missing/empty in .env — r2-presign will 500"; \
-	else \
-	  grep -E '^R2_' .env > $(FUNCTIONS_ENV); \
-	  echo "$(FUNCTIONS_ENV) synced from .env"; \
-	fi
+functions-env: ## Write supabase/functions/.env: STORAGE_DRIVER=local + any R2_* overrides from .env
+	@{ \
+	  echo "STORAGE_DRIVER=local"; \
+	  echo "LOCAL_PUBLIC_URL=$(API)"; \
+	  [ -f .env ] && grep -E '^R2_' .env; \
+	  true; \
+	} > $(FUNCTIONS_ENV)
+	@echo "$(FUNCTIONS_ENV) synced (STORAGE_DRIVER=local; r2-presign uses local Supabase Storage, no R2 secrets needed)"
 
 staff-user: ## Create the local staff user (idempotent; db reset wipes users)
 	@out=$$(curl -s -X POST "$(API)/auth/v1/admin/users" \

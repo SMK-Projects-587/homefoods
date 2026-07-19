@@ -117,12 +117,25 @@ enabled = true
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 
-# Uncomment to configure local storage buckets
-# [storage.buckets.images]
-# public = false
-# file_size_limit = "50MiB"
-# allowed_mime_types = ["image/png", "image/jpeg"]
-# objects_path = "./images"
+# LOCAL-ONLY dev storage (this file only governs the local stack — see the
+# `enable_signup` comment under [auth] for the same pattern). Production
+# never touches Supabase Storage; it uses Cloudflare R2 exclusively via the
+# `r2-presign` edge function (STORAGE_DRIVER=r2, see TODO.md). Locally,
+# STORAGE_DRIVER=local points that same function at these buckets instead,
+# so image/invoice uploads work out of the box with zero Cloudflare setup.
+#
+# `images` is public so product/category photos are plain, unsigned GETs —
+# mirroring the R2 custom-domain plan for prod (see README "Storage"
+# section). `invoices` stays private; downloads are always signed.
+[storage.buckets.images]
+public = true
+file_size_limit = "10MiB"
+allowed_mime_types = ["image/png", "image/jpeg", "image/webp"]
+
+[storage.buckets.invoices]
+public = false
+file_size_limit = "10MiB"
+allowed_mime_types = ["application/pdf"]
 
 # Allow connections via S3 compatible clients
 [storage.s3_protocol]

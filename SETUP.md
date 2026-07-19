@@ -33,8 +33,12 @@ This is idempotent and does, in order:
    lockfile (never use a global/`npx`-latest CLI; version drift between
    machines is exactly what this setup prevents).
 3. Creates `.env` from `.env.example` if missing (you fill in real values).
-4. Writes `supabase/functions/.env` from the `R2_*` lines of `.env`
-   (auto-loaded by `supabase functions serve`).
+4. Writes `supabase/functions/.env` with `STORAGE_DRIVER=local` plus any
+   `R2_*` lines from `.env` (auto-loaded by `supabase functions serve`).
+   `r2-presign` talks to the local Supabase Storage buckets in this mode —
+   **no Cloudflare account or R2 credentials needed to develop locally**
+   (see README "Storage" section, and [TODO.md](./TODO.md) for the
+   production R2 switch).
 5. `supabase start` — first start on a fresh machine downloads the images and
    applies **all migrations + seed.sql**, so you end up with the identical
    schema and dev data.
@@ -50,7 +54,7 @@ After editing secrets in `.env`, re-run `npm run functions:env`.
 | `npm run db:status` | local URLs + anon/service keys |
 | `npm run db:reset` | wipe + replay all migrations + seed.sql (the "make it exactly like the repo" button) |
 | `npm run functions:serve` | serve `r2-presign` locally with hot reload |
-| `npm run functions:env` | re-sync `R2_*` from `.env` to `supabase/functions/.env` |
+| `npm run functions:env` | re-sync `STORAGE_DRIVER=local` + `R2_*` from `.env` to `supabase/functions/.env` |
 | `npm run types` | regenerate `types/database.types.ts` from the local DB |
 
 Local ports (from `config.toml`): API **54321**, Postgres **54322**, Studio
@@ -75,11 +79,13 @@ Hosted — Dashboard → Authentication → Users → *Add user*.
 ```bash
 npx supabase login
 npx supabase link --project-ref <ref>
-npx supabase db push                  # apply migrations to hosted DB
-npx supabase secrets set R2_...=...   # function secrets on hosted
+npx supabase db push                              # apply migrations to hosted DB
+npx supabase secrets set STORAGE_DRIVER=r2 R2_...=...   # function secrets on hosted
 ```
 
 Migrations are append-only once pushed — fix mistakes with a new migration.
+R2 itself (buckets, API token, custom domain) isn't set up yet — see
+[TODO.md](./TODO.md).
 
 ## New-machine checklist (what to carry over manually)
 
@@ -90,6 +96,7 @@ Migrations are append-only once pushed — fix mistakes with a new migration.
 - [ ] Staff users on the **local** stack — local auth users live in the local
       DB volume; recreate with the curl above (seed.sql does not create users).
 - [ ] Cloudflare R2 buckets (`homefoods-images`, `homefoods-invoices`) live in
-      the Cloudflare account, not on any machine — nothing to migrate.
+      the Cloudflare account, not on any machine — nothing to migrate. Not
+      created yet; see [TODO.md](./TODO.md).
 - [ ] Hosted dashboard toggles (signups OFF, anonymous OFF) — account-level,
       one-time; see README "Auth" section.

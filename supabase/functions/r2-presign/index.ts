@@ -1,16 +1,25 @@
 // r2-presign — the only server-side code in the system.
 //
-// The React dashboard cannot hold R2 credentials (anything shipped to the
-// browser is public), so this staff-only function brokers access to the two
-// Cloudflare R2 buckets:
+// The React dashboard cannot hold storage credentials (anything shipped to
+// the browser is public), so this staff-only function brokers access to the
+// two object buckets (images, invoices) via one of two STORAGE_DRIVERs:
+//
+//   "local" — Supabase Storage running in the local stack (buckets declared
+//             in supabase/config.toml). Uses SUPABASE_URL /
+//             SUPABASE_SERVICE_ROLE_KEY, which every function gets for
+//             free — no Cloudflare setup needed to develop locally.
+//   "r2"    — Cloudflare R2 (production). See TODO.md for the remaining
+//             setup (buckets, API token, `supabase secrets set`, custom
+//             domain).
 //
 //   POST { action: "upload",   bucket: "images"|"invoices", key }
 //     -> { url, method: "PUT", bucket, key, expires_in }
-//        (the client then PUTs the file bytes directly to R2)
+//        (the client then PUTs the file bytes directly to storage)
 //   POST { action: "download", bucket, key }
 //     -> { url, method: "GET", bucket, key, expires_in }
-//        (presigned GET — needed for the private invoices bucket, and for
-//         images until the public custom domain exists)
+//        (signed GET for the private invoices bucket; for the public
+//         images bucket this returns a plain, unsigned URL instead — no
+//         auth needed to read it, only to ask for it here)
 //   POST { action: "delete",   bucket, key }
 //     -> { ok: true }   (performed server-side; nothing is signed)
 //
@@ -19,9 +28,17 @@
 // succeeds for a real signed-in user, and per the trust model every
 // authenticated user is staff, so no further role checks are needed.
 //
-// Secrets (supabase/functions/.env locally, `supabase secrets set` hosted):
-// R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_S3_ENDPOINT,
-// R2_BUCKET_IMAGES, R2_BUCKET_INVOICES.
+// Secrets:
+//   STORAGE_DRIVER=local|r2, LOCAL_PUBLIC_URL (only read when
+//     STORAGE_DRIVER=local — the host-reachable API URL, since
+//     SUPABASE_URL inside the function is the internal Docker address) —
+//     both written to supabase/functions/.env locally by
+//     scripts/sync-function-env.sh; STORAGE_DRIVER=r2 is set via `supabase
+//     secrets set` on the hosted project (TODO.md), which never runs the
+//     local driver so has no need for LOCAL_PUBLIC_URL.
+//   R2_* (only read when STORAGE_DRIVER=r2): R2_ACCESS_KEY_ID,
+//     R2_SECRET_ACCESS_KEY, R2_S3_ENDPOINT, R2_BUCKET_IMAGES,
+//     R2_BUCKET_INVOICES.
 
 import { createClient } from "@supabase/supabase-js";
 import { AwsClient } from "aws4fetch";
@@ -65,6 +82,106 @@ function validateKey(bucket: string, key: string): string | null {
   return null;
 }
 
+type SignAction = "upload" | "download";
+type SignResult = {
+  url: string;
+  method: "PUT" | "GET";
+  expires_in: number | null;
+};
+
+// ---- local driver: Supabase Storage ----
+
+function localAdmin() {
+  return createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"));
+}
+
+// SUPABASE_URL inside the edge runtime is the internal Docker network
+// address (http://kong:8000) — right for the server-to-server calls below,
+// but useless as a URL handed back to a browser or curl on the host. Swap
+// in the host-reachable origin for anything we return to the caller.
+function toPublicUrl(url: string): string {
+  const u = new URL(url);
+  return `${env("LOCAL_PUBLIC_URL")}${u.pathname}${u.search}`;
+}
+
+async function signLocal(
+  action: SignAction,
+  bucket: string,
+  key: string,
+): Promise<SignResult> {
+  const store = localAdmin().storage.from(bucket);
+
+  if (action === "download" && bucket === "images") {
+    const { data } = store.getPublicUrl(key);
+    return { url: toPublicUrl(data.publicUrl), method: "GET", expires_in: null };
+  }
+
+  if (action === "upload") {
+    const { data, error } = await store.createSignedUploadUrl(key);
+    if (error) throw new Error(`local storage sign failed: ${error.message}`);
+    return {
+      url: toPublicUrl(data.signedUrl),
+      method: "PUT",
+      expires_in: EXPIRES_SECONDS,
+    };
+  }
+
+  const { data, error } = await store.createSignedUrl(key, EXPIRES_SECONDS);
+  if (error) throw new Error(`local storage sign failed: ${error.message}`);
+  return {
+    url: toPublicUrl(data.signedUrl),
+    method: "GET",
+    expires_in: EXPIRES_SECONDS,
+  };
+}
+
+async function deleteLocal(bucket: string, key: string): Promise<void> {
+  const { error } = await localAdmin().storage.from(bucket).remove([key]);
+  if (error) throw new Error(`local storage delete failed: ${error.message}`);
+}
+
+// ---- r2 driver: Cloudflare R2 (production) ----
+
+function r2Client(): AwsClient {
+  return new AwsClient({
+    accessKeyId: env("R2_ACCESS_KEY_ID"),
+    secretAccessKey: env("R2_SECRET_ACCESS_KEY"),
+    service: "s3",
+    region: "auto",
+  });
+}
+
+function r2ObjectUrl(bucket: string, key: string): URL {
+  const buckets: Record<string, string> = {
+    images: env("R2_BUCKET_IMAGES"),
+    invoices: env("R2_BUCKET_INVOICES"),
+  };
+  return new URL(`${env("R2_S3_ENDPOINT")}/${buckets[bucket]}/${key}`);
+}
+
+async function signR2(
+  action: SignAction,
+  bucket: string,
+  key: string,
+): Promise<SignResult> {
+  const method = action === "upload" ? "PUT" : "GET";
+  const objectUrl = r2ObjectUrl(bucket, key);
+  objectUrl.searchParams.set("X-Amz-Expires", String(EXPIRES_SECONDS));
+  const signed = await r2Client().sign(new Request(objectUrl, { method }), {
+    aws: { signQuery: true },
+  });
+  return { url: signed.url, method, expires_in: EXPIRES_SECONDS };
+}
+
+async function deleteR2(bucket: string, key: string): Promise<void> {
+  const res = await r2Client().fetch(r2ObjectUrl(bucket, key).toString(), {
+    method: "DELETE",
+  });
+  if (!res.ok && res.status !== 204) {
+    throw new Error(`R2 delete failed: ${res.status}`);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -101,47 +218,33 @@ Deno.serve(async (req) => {
   const keyError = validateKey(bucket, key);
   if (keyError) return json(400, { error: keyError });
 
-  const buckets: Record<string, string> = {
-    images: env("R2_BUCKET_IMAGES"),
-    invoices: env("R2_BUCKET_INVOICES"),
-  };
+  const driver = env("STORAGE_DRIVER");
+  if (driver !== "local" && driver !== "r2") {
+    return json(500, { error: `unknown STORAGE_DRIVER: "${driver}"` });
+  }
 
-  const r2 = new AwsClient({
-    accessKeyId: env("R2_ACCESS_KEY_ID"),
-    secretAccessKey: env("R2_SECRET_ACCESS_KEY"),
-    service: "s3",
-    region: "auto",
-  });
-  const objectUrl = new URL(
-    `${env("R2_S3_ENDPOINT")}/${buckets[bucket]}/${key}`,
-  );
-
-  switch (action) {
-    case "upload":
-    case "download": {
-      const method = action === "upload" ? "PUT" : "GET";
-      objectUrl.searchParams.set("X-Amz-Expires", String(EXPIRES_SECONDS));
-      const signed = await r2.sign(new Request(objectUrl, { method }), {
-        aws: { signQuery: true },
-      });
-      return json(200, {
-        url: signed.url,
-        method,
-        bucket,
-        key,
-        expires_in: EXPIRES_SECONDS,
-      });
-    }
-    case "delete": {
-      const res = await r2.fetch(objectUrl.toString(), { method: "DELETE" });
-      if (!res.ok && res.status !== 204) {
-        return json(502, { error: `R2 delete failed: ${res.status}` });
+  try {
+    switch (action) {
+      case "upload":
+      case "download": {
+        const result = driver === "local"
+          ? await signLocal(action, bucket, key)
+          : await signR2(action, bucket, key);
+        return json(200, { ...result, bucket, key });
       }
-      return json(200, { ok: true });
+      case "delete": {
+        if (driver === "local") await deleteLocal(bucket, key);
+        else await deleteR2(bucket, key);
+        return json(200, { ok: true });
+      }
+      default:
+        return json(400, {
+          error: 'action must be "upload", "download" or "delete"',
+        });
     }
-    default:
-      return json(400, {
-        error: 'action must be "upload", "download" or "delete"',
-      });
+  } catch (err) {
+    return json(502, {
+      error: err instanceof Error ? err.message : "storage operation failed",
+    });
   }
 });

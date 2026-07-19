@@ -12,5 +12,5 @@ export const supabase = createClient<Database>(url, anonKey, {
 // image_path columns store object paths inside the public product-images
 // bucket, not URLs.
 export function productImageUrl(path: string) {
-  return `${url}/storage/v1/object/public/product-images/${path}`;
+  return `${url}/storage/v1/object/public/images/${path}`;
 }

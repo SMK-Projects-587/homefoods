@@ -117,35 +117,73 @@ from public.products p
 where p.slug in ('avakaya-mango-pickle', 'kaju-katli');
 
 -- ---------------------------------------------------------------------------
--- Sample orders (recorded manually by staff), items snapshot the variant
+-- Sample orders (recorded manually by staff), items snapshot the variant.
+-- Statuses exercise the full lifecycle from
+-- 20260719120000_order_status_lifecycle.sql: pending -> confirmed ->
+-- completed, and pending/confirmed -> cancelled (with a reason). payment_status
+-- is independent of status and always optional (null = not tracked). Order
+-- numbers are left for the auto-generation trigger, which assigns them
+-- sequentially (ORD-000001..ORD-000004 on a fresh reset).
 -- ---------------------------------------------------------------------------
-insert into public.orders (status, customer_name, customer_phone, customer_email,
+insert into public.orders (status, payment_status, customer_name, customer_phone, customer_email,
                            shipping_address, notes, subtotal, discount, shipping_fee, tax, total)
 values
-  ('delivered', 'Ravi Kumar', '+91 98490 12345', 'ravi.kumar@example.com',
+  ('completed', 'paid', 'Ravi Kumar', '+91 98490 12345', 'ravi.kumar@example.com',
    '{"line1": "12-3-45 Brodipet", "line2": "3rd Lane", "city": "Guntur", "state": "Andhra Pradesh", "postal_code": "522002", "country": "India"}',
    'Repeat customer — pack avakaya separately.',
    578.00, 0, 60.00, 0, 638.00),
-  ('confirmed', 'Sunita Reddy', '+91 90000 67890', '',
+  ('confirmed', null, 'Sunita Reddy', '+91 90000 67890', '',
    '{"line1": "Flat 402, Sai Residency", "line2": "Madhapur", "city": "Hyderabad", "state": "Telangana", "postal_code": "500081", "country": "India"}',
    '',
-   458.00, 20.00, 60.00, 0, 498.00);
+   458.00, 20.00, 60.00, 0, 498.00),
+  ('pending', null, 'Lakshmi Prasad', '+91 91234 56789', '',
+   '{"line1": "8-2-120 Road No. 3", "line2": "Banjara Hills", "city": "Hyderabad", "state": "Telangana", "postal_code": "500034", "country": "India"}',
+   '',
+   357.00, 0, 60.00, 0, 417.00),
+  ('cancelled', 'refunded', 'Anil Chowdary', '+91 99887 66554', 'anil.c@example.com',
+   '{"line1": "45 Ring Road", "line2": "", "city": "Vijayawada", "state": "Andhra Pradesh", "postal_code": "520010", "country": "India"}',
+   '',
+   597.00, 0, 60.00, 0, 657.00);
 
 insert into public.order_items (order_id, variant_id, product_name, variant_title, sku,
                                 attributes, unit_price, quantity, line_total)
 select o.id, v.id, p.name, v.title, v.sku, v.attributes, v.price, li.quantity, v.price * li.quantity
 from (values
-  ('ORD-000001', 'Avakaya Mango Pickle', '500 g', 1),
-  ('ORD-000001', 'Gongura Pickle',       '500 g', 1),
-  ('ORD-000002', 'Kaju Katli',           '250 g', 1),
-  ('ORD-000002', 'Karam Podi',           '200 g', 1)
+  ('ORD-000001', 'Avakaya Mango Pickle',   '500 g', 1),
+  ('ORD-000001', 'Gongura Pickle',         '500 g', 1),
+  ('ORD-000002', 'Kaju Katli',             '250 g', 1),
+  ('ORD-000002', 'Karam Podi',             '200 g', 1),
+  ('ORD-000003', 'Nimmakaya Lemon Pickle', '250 g', 2),
+  ('ORD-000003', 'Murukulu',               '250 g', 1),
+  ('ORD-000004', 'Bandar Laddu',           '500 g', 1),
+  ('ORD-000004', 'Pappu Chekkalu',         '250 g', 2)
 ) as li(order_number, product_name, variant_title, quantity)
 join public.orders o on o.order_number = li.order_number
 join public.products p on p.name = li.product_name
 join public.product_variants v on v.product_id = p.id and v.title = li.variant_title;
 
 -- ---------------------------------------------------------------------------
--- One issued invoice for the delivered order — proves the FY numbering
+-- Status-transition history for the orders above. changed_by is left null —
+-- the local staff user (created by `make staff-user`, after seeding) doesn't
+-- exist yet at seed time, so there's no auth.users id to reference. Order
+-- creation itself isn't logged (only Confirm/Complete/Cancel actions are, see
+-- OrderStatusActions.component.tsx in the dashboard) — ORD-000003 (pending)
+-- has no rows here for the same reason, it hasn't left its initial state yet.
+-- ---------------------------------------------------------------------------
+insert into public.order_status_history (order_id, from_status, to_status, reason)
+select o.id, h.from_status, h.to_status, h.reason
+from (values
+  ('ORD-000001', 'pending',   'confirmed', null),
+  ('ORD-000001', 'confirmed', 'completed', null),
+  ('ORD-000002', 'pending',   'confirmed', null),
+  ('ORD-000004', 'pending',   'confirmed', null),
+  ('ORD-000004', 'confirmed', 'cancelled',
+   'Customer found a cheaper option locally and asked to cancel before packing.')
+) as h(order_number, from_status, to_status, reason)
+join public.orders o on o.order_number = h.order_number;
+
+-- ---------------------------------------------------------------------------
+-- One issued invoice for the completed order — proves the FY numbering
 -- trigger works from a cold database (expect HF/<current FY>/0001).
 -- ---------------------------------------------------------------------------
 insert into public.invoices (order_id, status, issued_at, billing_name, billing_address,

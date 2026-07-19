@@ -210,6 +210,44 @@ export type Database = {
           },
         ]
       }
+      order_status_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          from_status: string | null
+          id: number
+          order_id: number
+          reason: string | null
+          to_status: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: never
+          order_id: number
+          reason?: string | null
+          to_status: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: never
+          order_id?: number
+          reason?: string | null
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           created_at: string
@@ -221,6 +259,7 @@ export type Database = {
           id: number
           notes: string
           order_number: string
+          payment_status: string | null
           shipping_address: Json
           shipping_fee: number
           status: string
@@ -239,6 +278,7 @@ export type Database = {
           id?: never
           notes?: string
           order_number: string
+          payment_status?: string | null
           shipping_address?: Json
           shipping_fee?: number
           status?: string
@@ -257,6 +297,7 @@ export type Database = {
           id?: never
           notes?: string
           order_number?: string
+          payment_status?: string | null
           shipping_address?: Json
           shipping_fee?: number
           status?: string
@@ -454,6 +495,39 @@ export type Database = {
         }[]
       }
       slugify: { Args: { input: string }; Returns: string }
+      update_order_status: {
+        Args: {
+          p_from_status: string
+          p_order_id: number
+          p_reason?: string
+          p_to_status: string
+        }
+        Returns: {
+          created_at: string
+          created_by: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          discount: number
+          id: number
+          notes: string
+          order_number: string
+          payment_status: string | null
+          shipping_address: Json
+          shipping_fee: number
+          status: string
+          subtotal: number
+          tax: number
+          total: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never
