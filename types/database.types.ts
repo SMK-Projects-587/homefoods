@@ -458,14 +458,71 @@ export type Database = {
           },
         ]
       }
+      search_log: {
+        Row: {
+          day: string
+          last_result_count: number
+          search_count: number
+          term: string
+          zero_result_count: number
+        }
+        Insert: {
+          day: string
+          last_result_count: number
+          search_count?: number
+          term: string
+          zero_result_count?: number
+        }
+        Update: {
+          day?: string
+          last_result_count?: number
+          search_count?: number
+          term?: string
+          zero_result_count?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      order_revenue_daily: {
+        Row: {
+          day: string | null
+          order_count: number | null
+          revenue: number | null
+          status: string | null
+        }
+        Relationships: []
+      }
+      product_sales_totals: {
+        Row: {
+          last_sold_at: string | null
+          order_count: number | null
+          product_name: string | null
+          revenue: number | null
+          sku: string | null
+          units_sold: number | null
+          variant_id: number | null
+          variant_title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       generate_unique_slug: {
         Args: { source_name: string; tbl: unknown }
         Returns: string
+      }
+      log_search: {
+        Args: { p_result_count: number; p_term: string }
+        Returns: undefined
       }
       next_invoice_number: { Args: never; Returns: string }
       search_products: {
