@@ -11,11 +11,13 @@ const POPULAR = ["avakaya", "karam podi", "gongura", "murukulu", "kaju katli"];
 
 export default function SearchBar({
   defaultValue = "",
-  variant = "header",
+  autoFocus = false,
+  onNavigate,
   className = "",
 }: {
   defaultValue?: string;
-  variant?: "header" | "hero";
+  autoFocus?: boolean;
+  onNavigate?: () => void;
   className?: string;
 }) {
   const router = useRouter();
@@ -24,7 +26,7 @@ export default function SearchBar({
   const requestRef = useRef(0);
 
   const [value, setValue] = useState(defaultValue);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(autoFocus);
   const [active, setActive] = useState(-1);
   const [tick, setTick] = useState(0);
   const [fetched, setFetched] = useState<{
@@ -37,7 +39,7 @@ export default function SearchBar({
   // Stale-while-revalidate: keep showing the previous results while typing.
   const results = live ? fetched.results : [];
   const searching = live && fetched.term !== term;
-  const placeholder = `Try “${POPULAR[tick % POPULAR.length]}”`;
+  const placeholder = `Murukulu, avakaya, ${POPULAR[tick % POPULAR.length]}…`;
 
   // Rotate the placeholder while the field sits empty.
   useEffect(() => {
@@ -77,6 +79,7 @@ export default function SearchBar({
   const goTo = (href: string) => {
     setOpen(false);
     inputRef.current?.blur();
+    onNavigate?.();
     router.push(href);
   };
 
@@ -89,8 +92,6 @@ export default function SearchBar({
     }
   };
 
-  const hero = variant === "hero";
-
   return (
     <div ref={boxRef} className={`relative ${className}`}>
       <form action="/products" role="search" onSubmit={onSubmit} className="relative">
@@ -99,11 +100,9 @@ export default function SearchBar({
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2.5"
+          strokeWidth="2.4"
           strokeLinecap="round"
-          className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-chilli ${
-            hero ? "left-4 size-5" : "left-3.5 size-4"
-          }`}
+          className="pointer-events-none absolute left-4 top-1/2 size-4.5 -translate-y-1/2 text-neutral-500"
         >
           <circle cx="11" cy="11" r="7" />
           <path d="m20 20-3.5-3.5" />
@@ -114,6 +113,7 @@ export default function SearchBar({
           name="q"
           autoComplete="off"
           enterKeyHint="search"
+          autoFocus={autoFocus}
           value={value}
           onChange={(e) => {
             setValue(e.target.value);
@@ -133,26 +133,22 @@ export default function SearchBar({
           }}
           placeholder={placeholder}
           aria-label="Search products"
-          className={`w-full rounded-full border-2 border-ink bg-paper font-medium outline-none transition-shadow placeholder:text-soft/70 ${
-            hero
-              ? "py-3.5 pl-12 pr-5 text-base shadow-[4px_4px_0_0_var(--color-cream)] focus:shadow-[4px_4px_0_0_var(--color-turmeric)]"
-              : "py-2.5 pl-10 pr-4 text-sm focus:shadow-[3px_3px_0_0_var(--color-turmeric)]"
-          }`}
+          className="w-full rounded-full border border-neutral-300 bg-neutral-100 py-3.5 pl-11.5 pr-5 text-[15px] font-medium text-ink outline-none transition-colors placeholder:text-neutral-500 focus:border-accent"
         />
       </form>
 
       {open && (
-        <div className="absolute inset-x-0 top-full z-50 mt-2 overflow-hidden border-2 border-ink bg-paper shadow-[6px_6px_0_0_var(--color-cream)]">
+        <div className="absolute inset-x-0 top-full z-50 mt-2 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100 shadow-lg">
           {!live ? (
             <div className="p-4">
-              <p className="label text-soft">Everyone’s searching</p>
+              <p className="label text-neutral-500">Everyone&rsquo;s searching</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {POPULAR.map((p) => (
                   <button
                     key={p}
                     type="button"
                     onClick={() => goTo(`/products?q=${encodeURIComponent(p)}`)}
-                    className="cursor-pointer rounded-full border border-ink/30 px-3 py-1.5 text-xs font-bold transition-colors hover:border-chilli hover:text-chilli"
+                    className="cursor-pointer rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-bold capitalize transition-colors hover:border-accent hover:text-accent-700"
                   >
                     {p}
                   </button>
@@ -160,30 +156,34 @@ export default function SearchBar({
               </div>
             </div>
           ) : searching && results.length === 0 ? (
-            <p className="p-4 text-sm text-soft">Searching the shelves…</p>
+            <p className="p-4 text-sm text-neutral-600">Searching the shelves…</p>
           ) : results.length === 0 ? (
-            <p className="p-4 text-sm text-soft">
-              Nothing for “{term}” yet — typos are fine, keep typing.
+            <p className="p-4 text-sm text-neutral-600">
+              Nothing for &ldquo;{term}&rdquo; yet — try &ldquo;podi&rdquo;,
+              &ldquo;pickle&rdquo; or &ldquo;laddu&rdquo;.
             </p>
           ) : (
             <>
-              <ul>
+              <ul className="p-1.5">
                 {results.map((p, i) => (
                   <li key={p.id}>
                     <Link
                       href={`/products/${p.slug}`}
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        setOpen(false);
+                        onNavigate?.();
+                      }}
                       onMouseEnter={() => setActive(i)}
-                      className={`flex items-center gap-3 px-3 py-2.5 transition-colors ${
-                        i === active ? "bg-cream" : ""
+                      className={`flex items-center gap-3 rounded-md px-2.5 py-2 transition-colors ${
+                        i === active ? "bg-accent-100" : ""
                       }`}
                     >
-                      <span className="block size-11 shrink-0 overflow-hidden border border-line">
+                      <span className="block size-11 shrink-0 overflow-hidden rounded-[10px]">
                         <CatalogImage
                           path={p.imagePath}
                           alt=""
                           name={p.name}
-                          className="size-full object-cover"
+                          className="washed size-full object-cover"
                         />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -191,13 +191,13 @@ export default function SearchBar({
                           {p.name}
                         </span>
                         {p.categorySlug && (
-                          <span className="block text-xs capitalize text-soft">
+                          <span className="block text-xs capitalize text-neutral-600">
                             {p.categorySlug.replace(/-/g, " ")}
                           </span>
                         )}
                       </span>
                       {!p.inStock ? (
-                        <span className="label text-chilli">Sold out</span>
+                        <span className="label text-accent-700">Sold out</span>
                       ) : (
                         p.price != null && (
                           <span className="text-sm font-bold">
@@ -211,10 +211,13 @@ export default function SearchBar({
               </ul>
               <Link
                 href={`/products?q=${encodeURIComponent(term)}`}
-                onClick={() => setOpen(false)}
-                className="label block border-t border-line bg-cream px-4 py-3 text-chilli transition-colors hover:bg-turmeric-soft"
+                onClick={() => {
+                  setOpen(false);
+                  onNavigate?.();
+                }}
+                className="label block border-t border-neutral-200 bg-accent-100 px-4 py-3 text-accent-700 transition-colors hover:bg-accent-200"
               >
-                See all results for “{term}” →
+                See all results for &ldquo;{term}&rdquo; →
               </Link>
             </>
           )}

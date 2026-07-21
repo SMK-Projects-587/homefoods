@@ -42,6 +42,7 @@ export type Database = {
           image_path: string
           is_active: boolean
           name: string
+          native_name: string | null
           slug: string
           updated_at: string
         }
@@ -52,6 +53,7 @@ export type Database = {
           image_path?: string
           is_active?: boolean
           name: string
+          native_name?: string | null
           slug: string
           updated_at?: string
         }
@@ -62,6 +64,7 @@ export type Database = {
           image_path?: string
           is_active?: boolean
           name?: string
+          native_name?: string | null
           slug?: string
           updated_at?: string
         }
@@ -210,6 +213,44 @@ export type Database = {
           },
         ]
       }
+      order_status_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          from_status: string | null
+          id: number
+          order_id: number
+          reason: string | null
+          to_status: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: never
+          order_id: number
+          reason?: string | null
+          to_status: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: never
+          order_id?: number
+          reason?: string | null
+          to_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           created_at: string
@@ -221,6 +262,7 @@ export type Database = {
           id: number
           notes: string
           order_number: string
+          payment_status: string | null
           shipping_address: Json
           shipping_fee: number
           status: string
@@ -239,6 +281,7 @@ export type Database = {
           id?: never
           notes?: string
           order_number: string
+          payment_status?: string | null
           shipping_address?: Json
           shipping_fee?: number
           status?: string
@@ -257,6 +300,7 @@ export type Database = {
           id?: never
           notes?: string
           order_number?: string
+          payment_status?: string | null
           shipping_address?: Json
           shipping_fee?: number
           status?: string
@@ -375,6 +419,7 @@ export type Database = {
           meta_description: string
           meta_title: string
           name: string
+          native_name: string | null
           search_vector: unknown
           slug: string
           updated_at: string
@@ -389,6 +434,7 @@ export type Database = {
           meta_description?: string
           meta_title?: string
           name: string
+          native_name?: string | null
           search_vector?: unknown
           slug: string
           updated_at?: string
@@ -403,6 +449,7 @@ export type Database = {
           meta_description?: string
           meta_title?: string
           name?: string
+          native_name?: string | null
           search_vector?: unknown
           slug?: string
           updated_at?: string
@@ -417,14 +464,97 @@ export type Database = {
           },
         ]
       }
+      search_log: {
+        Row: {
+          day: string
+          last_result_count: number
+          search_count: number
+          term: string
+          zero_result_count: number
+        }
+        Insert: {
+          day: string
+          last_result_count: number
+          search_count?: number
+          term: string
+          zero_result_count?: number
+        }
+        Update: {
+          day?: string
+          last_result_count?: number
+          search_count?: number
+          term?: string
+          zero_result_count?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      order_revenue_daily: {
+        Row: {
+          day: string | null
+          order_count: number | null
+          revenue: number | null
+          status: string | null
+        }
+        Relationships: []
+      }
+      product_sales_totals: {
+        Row: {
+          last_sold_at: string | null
+          order_count: number | null
+          product_name: string | null
+          revenue: number | null
+          sku: string | null
+          units_sold: number | null
+          variant_id: number | null
+          variant_title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       generate_unique_slug: {
         Args: { source_name: string; tbl: unknown }
         Returns: string
+      }
+      issue_invoice: {
+        Args: { p_order_id: number }
+        Returns: {
+          billing_address: Json
+          billing_name: string
+          created_at: string
+          discount: number
+          id: number
+          invoice_number: string
+          issued_at: string | null
+          line_items: Json
+          order_id: number
+          pdf_key: string
+          status: string
+          subtotal: number
+          tax: number
+          total: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "invoices"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      log_search: {
+        Args: { p_result_count: number; p_term: string }
+        Returns: undefined
       }
       next_invoice_number: { Args: never; Returns: string }
       search_products: {
@@ -454,6 +584,39 @@ export type Database = {
         }[]
       }
       slugify: { Args: { input: string }; Returns: string }
+      update_order_status: {
+        Args: {
+          p_from_status: string
+          p_order_id: number
+          p_reason?: string
+          p_to_status: string
+        }
+        Returns: {
+          created_at: string
+          created_by: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          discount: number
+          id: number
+          notes: string
+          order_number: string
+          payment_status: string | null
+          shipping_address: Json
+          shipping_fee: number
+          status: string
+          subtotal: number
+          tax: number
+          total: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never

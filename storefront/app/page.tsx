@@ -1,212 +1,226 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import CatalogImage from "@/components/catalog-image";
 import ProductCard from "@/components/product-card";
-import SearchBar from "@/components/search-bar";
-import VegMark from "@/components/veg-mark";
 import { getCategories, getProducts } from "@/lib/catalog";
 
-export const dynamic = "force-dynamic";
+// ISR: re-render at most every 10 minutes instead of on every request.
+export const revalidate = 600;
 
-const TICKER = [
-  "Avakaya",
-  "Gongura",
-  "Karam Podi",
-  "Murukulu",
-  "Kaju Katli",
-  "Nimmakaya",
-  "Kandi Podi",
-  "Chekkalu",
-  "Bandar Laddu",
-];
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
+
+function TrustTile({
+  bg,
+  label,
+  icon,
+}: {
+  bg: string;
+  label: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <div
+      className={`flex flex-col items-center gap-1.5 rounded-lg px-2.5 py-3.5 text-center ${bg}`}
+    >
+      {icon}
+      <span className="text-[12px] font-bold">{label}</span>
+    </div>
+  );
+}
 
 export default async function HomePage() {
   const [categories, products] = await Promise.all([
     getCategories(),
     getProducts(),
   ]);
-  const featured = products.slice(0, 8);
-  const collage = products.slice(0, 3);
+  const bestsellers = products.slice(0, 8);
+  const collage = products.slice(0, 4);
+  const countFor = (slug: string) =>
+    products.filter((p) => p.categorySlug === slug).length;
 
   return (
-    <>
+    <div className="mx-auto max-w-[1160px] px-4 sm:px-[22px]">
       {/* Hero */}
-      <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-10 md:grid-cols-[3fr_2fr] md:py-20">
+      <section className="grid items-center gap-8 pb-6 pt-8 md:grid-cols-[1.05fr_1fr] md:gap-12 md:pb-12 md:pt-14">
         <div>
-          <p className="label animate-rise text-chilli">
-            <span className="font-telugu text-sm normal-case tracking-normal">
-              ఇంటి రుచి
-            </span>{" "}
-            · from our kitchen in Guntur
-          </p>
+          <div className="flex animate-rise flex-wrap gap-2">
+            <span className="rounded-full bg-sage-100 px-3 py-1 text-[12px] font-bold text-sage-800">
+              100% Pure Veg
+            </span>
+            <span className="rounded-full bg-accent-100 px-3 py-1 text-[12px] font-bold text-accent-800">
+              30+ years of taste
+            </span>
+          </div>
           <h1
-            className="mt-4 animate-rise font-display text-4xl leading-[1.05] sm:text-6xl lg:text-7xl"
-            style={{ animationDelay: "80ms" }}
+            className="mt-4 animate-rise font-heading text-[40px] leading-[1.06] sm:text-[54px]"
+            style={{ animationDelay: "70ms" }}
           >
-            Pickles with a<br />
-            <em className="text-chilli">temper</em>, podis
+            Amma&rsquo;s kitchen,
             <br />
-            with a <em className="text-leaf">past</em>.
+            shipped to your door.
           </h1>
           <p
-            className="mt-6 max-w-md animate-rise text-lg text-soft"
-            style={{ animationDelay: "160ms" }}
+            className="telugu mt-3 animate-rise text-[17px] text-accent-700"
+            style={{ animationDelay: "120ms" }}
           >
-            Andhra pantry staples stirred, sun-cured and stone-ground in small
-            batches — then packed into jars the day you order.
+            పిండి వంటలు · పొడులు · ఊరగాయలు
+          </p>
+          <p
+            className="mt-4 max-w-md animate-rise text-[15.5px] text-neutral-700"
+            style={{ animationDelay: "170ms" }}
+          >
+            Traditional Brahmin home-style snacks, podis and pickles from
+            Vizianagaram — hand-made in small batches, no preservatives, ever.
           </p>
           <div
-            className="mt-8 hidden max-w-md animate-rise md:block"
-            style={{ animationDelay: "220ms" }}
-          >
-            <SearchBar variant="hero" />
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="label text-soft">Popular:</span>
-              {["Avakaya", "Karam podi", "Gongura", "Kaju katli"].map((t) => (
-                <Link
-                  key={t}
-                  href={`/products?q=${encodeURIComponent(t)}`}
-                  className="rounded-full border border-ink/30 px-3 py-1 text-xs font-bold transition-colors hover:border-chilli hover:text-chilli"
-                >
-                  {t}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div
-            className="mt-8 flex animate-rise flex-wrap items-center gap-4"
-            style={{ animationDelay: "300ms" }}
+            className="mt-6 flex animate-rise flex-wrap items-center gap-3"
+            style={{ animationDelay: "230ms" }}
           >
             <Link
               href="/products"
-              className="label bg-chilli px-6 py-4 text-paper transition-colors hover:bg-chilli-deep"
+              className="rounded-full bg-accent px-6 py-3.5 text-[15px] font-bold text-bg transition-colors hover:bg-accent-600 active:bg-accent-700"
             >
-              Shop the pantry
+              Shop bestsellers
             </Link>
             <Link
-              href="/category/pickles"
-              className="label border border-ink/30 px-6 py-4 transition-colors hover:bg-ink hover:text-paper"
+              href="/about"
+              className="rounded-full border border-line px-6 py-3.5 text-[15px] font-bold text-accent-700 transition-colors hover:bg-accent-100"
             >
-              Straight to pickles
+              Our story
             </Link>
           </div>
         </div>
 
-        {/* jar collage */}
-        <div className="relative hidden h-105 md:block" aria-hidden>
+        {/* Hero collage — real product tiles, washed, so it feels alive even
+            before photography lands. */}
+        <div className="grid animate-rise grid-cols-2 gap-3 md:gap-4" style={{ animationDelay: "120ms" }}>
           {collage.map((p, i) => (
-            <div
+            <Link
               key={p.id}
-              className="absolute w-52 animate-rise border-2 border-ink bg-paper p-2 shadow-[8px_8px_0_0_var(--color-cream)]"
-              style={{
-                top: `${i * 18}%`,
-                left: `${i * 22}%`,
-                rotate: `${(i - 1) * 5}deg`,
-                animationDelay: `${200 + i * 120}ms`,
-              }}
+              href={`/products/${p.slug}`}
+              className={`overflow-hidden rounded-lg bg-surface shadow-sm ${
+                i % 2 === 0 ? "md:mt-6" : ""
+              }`}
             >
               <CatalogImage
                 path={p.imagePath}
-                alt=""
+                alt={p.name}
                 name={p.name}
-                className="aspect-square w-full object-cover"
+                className="washed aspect-square w-full object-cover"
               />
-              <p className="label mt-2 truncate text-center">{p.name}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* Ticker */}
-      <div className="overflow-hidden border-y-2 border-ink bg-turmeric py-3">
-        <div className="flex w-max animate-marquee gap-8">
-          {[...TICKER, ...TICKER, ...TICKER, ...TICKER].map((word, i) => (
-            <span key={i} className="label flex items-center gap-8 text-ink">
-              {word} <span className="text-chilli">✳</span>
-            </span>
-          ))}
-        </div>
-      </div>
-
       {/* Trust strip */}
-      <div className="border-b-2 border-ink bg-paper">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 py-3">
-          <span className="flex items-center gap-2">
-            <VegMark />
-            <span className="label">100% vegetarian</span>
-          </span>
-          <span className="label text-soft">No preservatives</span>
-          <span className="label text-soft">Made to order</span>
-          <span className="label text-soft">Ships across India</span>
-        </div>
-      </div>
+      <section className="grid grid-cols-3 gap-3 py-4">
+        <TrustTile
+          bg="bg-sage-100 text-sage-800"
+          label="100% Pure Veg"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+              <path d="M11 20A7 7 0 0 1 4 13C4 8 8 4 13 4c3 0 7 1 7 1s-1 4-1 7a7 7 0 0 1-8 8Z" />
+              <path d="M8 17c2-3 5-5 8-6" />
+            </svg>
+          }
+        />
+        <TrustTile
+          bg="bg-accent-100 text-accent-800"
+          label="30+ years of trust"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 8v4l3 2" />
+            </svg>
+          }
+        />
+        <TrustTile
+          bg="bg-neutral-200 text-neutral-800"
+          label="Ships all over India"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+              <path d="M4 12a8 8 0 0 1 16 0" />
+              <path d="M7 12a5 5 0 0 1 10 0" />
+              <circle cx="12" cy="12" r="1.4" />
+            </svg>
+          }
+        />
+      </section>
 
-      {/* Categories */}
-      <section className="mx-auto max-w-6xl px-4 py-16">
-        <div className="flex items-baseline justify-between">
-          <h2 className="font-display text-4xl">The shelves</h2>
-          <Link href="/products" className="label text-chilli hover:underline">
-            Everything →
-          </Link>
-        </div>
-        <div className="no-scrollbar -mx-4 mt-8 grid snap-x snap-mandatory grid-flow-col auto-cols-[72%] gap-4 overflow-x-auto px-4 sm:mx-0 sm:grid-flow-row sm:auto-cols-auto sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4">
-          {categories.map((c, i) => (
+      {/* Shop by category */}
+      <section className="py-8">
+        <h2 className="font-heading text-[26px]">Shop by category</h2>
+        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+          {categories.map((c) => (
             <Link
               key={c.id}
-              href={`/category/${c.slug}`}
-              className="group snap-start border border-line bg-paper transition-all duration-300 hover:-translate-y-1 hover:border-ink/40 hover:shadow-[6px_6px_0_0_var(--color-cream)]"
+              href={`/products?category=${c.slug}`}
+              className="flex items-center gap-3 rounded-lg bg-neutral-100 p-4 transition-colors hover:bg-accent-100 active:bg-accent-200"
             >
-              <div className="aspect-4/3 overflow-hidden border-b border-line">
+              <span className="size-[54px] shrink-0 overflow-hidden rounded-full bg-surface">
                 <CatalogImage
                   path={c.image_path || null}
                   alt={c.name}
                   name={c.name}
-                  className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="washed size-full object-cover"
                 />
-              </div>
-              <div className="p-4">
-                <h3 className="font-display text-2xl">
-                  <span className="mr-2 text-sm text-soft">0{i + 1}</span>
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate text-[15px] font-bold">
                   {c.name}
-                </h3>
-                <p className="mt-1 line-clamp-2 text-sm text-soft">
-                  {c.description}
-                </p>
-              </div>
+                </span>
+                {c.native_name && (
+                  <span className="telugu block truncate text-[12.5px] text-accent-700">
+                    {c.native_name}
+                  </span>
+                )}
+                <span className="block text-[12px] text-neutral-600">
+                  {countFor(c.slug)} items
+                </span>
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Featured products */}
-      <section className="mx-auto max-w-6xl px-4 pb-16">
+      {/* Bestsellers */}
+      <section className="py-8">
         <div className="flex items-baseline justify-between">
-          <h2 className="font-display text-4xl">The regulars</h2>
-          <Link href="/products" className="label text-chilli hover:underline">
-            Shop all →
+          <h2 className="font-heading text-[26px]">Bestsellers</h2>
+          <Link href="/products" className="text-[14px] font-bold text-accent-700 hover:underline">
+            See all
           </Link>
         </div>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {featured.map((p) => (
-            <ProductCard key={p.id} product={p} />
+        {/* mobile: edge-bleed horizontal rail · desktop: 4-col grid */}
+        <div className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 sm:-mx-[22px] sm:px-[22px] md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0">
+          {bestsellers.map((p) => (
+            <div key={p.id} className="w-[168px] shrink-0 snap-start md:w-auto">
+              <ProductCard product={p} />
+            </div>
           ))}
         </div>
       </section>
 
-      {/* Story strip */}
-      <section className="border-t-2 border-ink bg-cream">
-        <blockquote className="mx-auto max-w-3xl px-4 py-16 text-center">
-          <p className="font-display text-3xl italic leading-snug sm:text-4xl">
-            &ldquo;No factories, no shortcuts. Just mustard, chilli, gingelly
-            oil and the patience to let a jar sit in the sun.&rdquo;
-          </p>
-          <footer className="label mt-6 text-soft">
-            <span className="font-telugu normal-case tracking-normal">
-              ఇంటి రుచి
-            </span>{" "}
-            · The HomeFoods kitchen
-          </footer>
-        </blockquote>
+      {/* About teaser */}
+      <section className="mb-10 mt-2 rounded-lg bg-sage-100 px-5 py-6 sm:px-8">
+        <h2 className="font-heading text-[24px] text-sage-900">
+          Filling tummies with happiness since 1992.
+        </h2>
+        <p className="mt-2 max-w-2xl text-[14.5px] text-sage-800">
+          What began in a small Vizianagaram kitchen is now amma&rsquo;s taste on
+          thousands of plates across India. Same recipes, same hands, same love.
+        </p>
+        <Link
+          href="/about"
+          className="mt-4 inline-block rounded-full border border-sage-600/40 bg-neutral-100/60 px-5 py-3 text-[14px] font-bold text-sage-800 transition-colors hover:bg-neutral-100"
+        >
+          Read our story
+        </Link>
       </section>
-    </>
+    </div>
   );
 }

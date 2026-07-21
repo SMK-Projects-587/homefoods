@@ -1,12 +1,35 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import ProductCard from "@/components/product-card";
-import SearchBar from "@/components/search-bar";
 import { getCategories, getProducts, searchProducts } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Shop all" };
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; category?: string }>;
+}): Promise<Metadata> {
+  const { q, category } = await searchParams;
+  const term = q?.trim();
+  if (term) {
+    // Search results are thin/duplicate — index the products, not the queries.
+    return {
+      title: `Search: ${term}`,
+      robots: { index: false, follow: true },
+      alternates: { canonical: "/products" },
+    };
+  }
+  if (category) {
+    // A filtered shop view duplicates the dedicated category page — point the
+    // canonical there so link equity consolidates on one URL.
+    return {
+      title: "Shop",
+      alternates: { canonical: `/category/${category}` },
+    };
+  }
+  return { title: "Shop", alternates: { canonical: "/products" } };
+}
 
 export default async function ProductsPage({
   searchParams,
@@ -26,10 +49,10 @@ export default async function ProductsPage({
   const activeCategory = categories.find((c) => c.slug === category) ?? null;
 
   const chip = (active: boolean) =>
-    `label shrink-0 border px-4 py-2 transition-colors ${
+    `shrink-0 rounded-full border px-4 py-2 text-[13.5px] font-bold transition-colors ${
       active
-        ? "border-ink bg-ink text-paper"
-        : "border-ink/30 hover:border-ink"
+        ? "border-accent bg-accent text-bg"
+        : "border-neutral-300 bg-neutral-100 text-neutral-700 hover:border-accent hover:text-accent-700"
     }`;
 
   const withParams = (categorySlug?: string) => {
@@ -41,57 +64,60 @@ export default async function ProductsPage({
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
-      <p className="label text-chilli">The pantry</p>
-      <h1 className="mt-2 font-display text-4xl sm:text-5xl">
+    <div className="mx-auto max-w-[1160px] px-4 py-8 sm:px-[22px] sm:py-10">
+      <h1 className="font-heading text-[30px]">
         {term ? (
           <>
-            Looking for <em className="text-chilli">&ldquo;{term}&rdquo;</em>
+            Looking for &ldquo;<span className="text-accent-700">{term}</span>
+            &rdquo;
           </>
         ) : activeCategory ? (
           activeCategory.name
         ) : (
-          "Everything we make"
+          "The whole kitchen"
         )}
       </h1>
-      <p className="mt-2 text-soft">
-        {products.length} {products.length === 1 ? "product" : "products"}
-        {term && " — typos welcome, we search generously"}
-      </p>
+      {!term && activeCategory?.native_name ? (
+        <p className="telugu mt-1 text-[14px] text-accent-700">
+          {activeCategory.native_name}
+        </p>
+      ) : (
+        <p className="mt-1 text-[14px] text-neutral-600">
+          {products.length} {products.length === 1 ? "item" : "items"}
+          {term && " — typos welcome, we search generously"}
+        </p>
+      )}
 
-      <div className="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
-          <Link href={withParams()} className={chip(!category)}>
-            All
+      <div className="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
+        <Link href={withParams()} className={chip(!category)}>
+          All
+        </Link>
+        {categories.map((c) => (
+          <Link
+            key={c.id}
+            href={withParams(c.slug)}
+            className={chip(category === c.slug)}
+          >
+            {c.name}
           </Link>
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={withParams(c.slug)}
-              className={chip(category === c.slug)}
-            >
-              {c.name}
-            </Link>
-          ))}
-        </div>
-        <SearchBar defaultValue={term} className="hidden md:block md:w-72" />
+        ))}
       </div>
 
       {products.length === 0 ? (
-        <div className="mt-16 border border-line bg-cream p-12 text-center">
-          <p className="font-display text-3xl italic">
+        <div className="mt-12 rounded-lg bg-neutral-100 p-12 text-center">
+          <p className="font-heading text-[24px]">
             Nothing on this shelf{term && ` for “${term}”`}.
           </p>
-          <p className="mt-2 text-soft">
+          <p className="mt-2 text-neutral-600">
             Try another spelling — or browse{" "}
-            <Link href="/products" className="text-chilli underline">
-              everything we make
+            <Link href="/products" className="font-bold text-accent-700 underline">
+              the whole kitchen
             </Link>
             .
           </p>
         </div>
       ) : (
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {products.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}

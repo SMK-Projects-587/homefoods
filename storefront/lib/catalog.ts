@@ -3,7 +3,7 @@ import type { Tables } from "./database.types";
 
 export type Category = Pick<
   Tables<"categories">,
-  "id" | "name" | "slug" | "description" | "image_path"
+  "id" | "name" | "slug" | "description" | "image_path" | "native_name"
 >;
 
 export type VariantRow = Pick<
@@ -24,10 +24,19 @@ export type ImageRow = Pick<
   "id" | "image_path" | "alt_text" | "is_primary" | "sort_order"
 >;
 
+// The default variant a card's quick-add button drops into the cart.
+export type CardVariant = {
+  id: number;
+  title: string;
+  sku: string;
+  price: number;
+};
+
 export type ProductCardData = {
   id: number;
   slug: string;
   name: string;
+  nativeName: string | null;
   price: number | null;
   compareAtPrice: number | null;
   inStock: boolean;
@@ -35,12 +44,16 @@ export type ProductCardData = {
   categoryName: string | null;
   categorySlug: string | null;
   variantCount: number | null;
+  // null when we can't resolve a default variant (e.g. search RPC cards);
+  // the card falls back to linking through to the product page.
+  defaultVariant: CardVariant | null;
 };
 
 export type ProductDetail = {
   id: number;
   slug: string;
   name: string;
+  native_name: string | null;
   description: string;
   keywords: string[];
   meta_title: string;
@@ -53,17 +66,21 @@ export type ProductDetail = {
 // product_variants!inner: a product with zero caller-visible active variants
 // (RLS hides variants of inactive products, and all-inactive variants) has
 // nothing to sell — never fetch it.
-const CARD_SELECT = `id, slug, name,
+const CARD_SELECT = `id, slug, name, native_name,
   category:categories(name, slug),
-  variants:product_variants!inner(price, compare_at_price, in_stock, is_default),
+  variants:product_variants!inner(id, title, sku, price, compare_at_price, in_stock, is_default),
   images:product_images(image_path, is_primary, sort_order)`;
 
 type CardRow = {
   id: number;
   slug: string;
   name: string;
+  native_name: string | null;
   category: { name: string; slug: string } | null;
-  variants: Pick<VariantRow, "price" | "compare_at_price" | "in_stock" | "is_default">[];
+  variants: Pick<
+    VariantRow,
+    "id" | "title" | "sku" | "price" | "compare_at_price" | "in_stock" | "is_default"
+  >[];
   images: Pick<ImageRow, "image_path" | "is_primary" | "sort_order">[];
 };
 
@@ -83,6 +100,7 @@ function toCard(row: CardRow): ProductCardData {
     id: row.id,
     slug: row.slug,
     name: row.name,
+    nativeName: row.native_name,
     price: def?.price ?? null,
     compareAtPrice: def?.compare_at_price ?? null,
     inStock: variants.some((v) => v.in_stock),
@@ -90,13 +108,17 @@ function toCard(row: CardRow): ProductCardData {
     categoryName: row.category?.name ?? null,
     categorySlug: row.category?.slug ?? null,
     variantCount: variants.length,
+    defaultVariant:
+      def && def.in_stock
+        ? { id: def.id, title: def.title, sku: def.sku, price: def.price }
+        : null,
   };
 }
 
 export async function getCategories(): Promise<Category[]> {
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, slug, description, image_path")
+    .select("id, name, slug, description, image_path, native_name")
     .order("id");
   if (error) throw error;
   return data;
@@ -105,7 +127,7 @@ export async function getCategories(): Promise<Category[]> {
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, slug, description, image_path")
+    .select("id, name, slug, description, image_path, native_name")
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw error;
@@ -132,7 +154,7 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
   const { data, error } = await supabase
     .from("products")
     .select(
-      `id, slug, name, description, keywords, meta_title, meta_description,
+      `id, slug, name, native_name, description, keywords, meta_title, meta_description,
        category:categories(name, slug),
        variants:product_variants!inner(id, title, sku, attributes, price, compare_at_price, stock, in_stock, is_default),
        images:product_images(id, image_path, alt_text, is_primary, sort_order)`,
@@ -167,6 +189,9 @@ export async function searchProducts(
     id: row.id,
     slug: row.slug,
     name: row.name,
+    // The search RPC returns a flat row without native_name or variant ids,
+    // so these cards show no Telugu line and link through instead of quick-add.
+    nativeName: null,
     price: row.price,
     compareAtPrice: row.compare_at_price,
     inStock: row.in_stock,
@@ -174,5 +199,6 @@ export async function searchProducts(
     categoryName: null,
     categorySlug: row.category_slug_out || null,
     variantCount: null,
+    defaultVariant: null,
   }));
 }

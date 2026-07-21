@@ -24,140 +24,101 @@ export default function BuyBox({
   const [selectedId, setSelectedId] = useState<number | null>(
     defaultVariant?.id ?? null,
   );
-  const [qty, setQty] = useState(1);
   const selected = variants.find((v) => v.id === selectedId) ?? null;
 
   if (!selected) {
     return (
-      <p className="border border-line bg-cream p-4 text-soft">
+      <p className="rounded-lg bg-neutral-100 p-4 text-neutral-600">
         Currently unavailable.
       </p>
     );
   }
 
-  const lowStock = selected.in_stock && selected.stock > 0 && selected.stock <= 8;
+  const addToCart = () => {
+    if (!selected.in_stock) return;
+    addItem({
+      variantId: selected.id,
+      productId,
+      productSlug,
+      productName,
+      variantTitle: selected.title,
+      sku: selected.sku,
+      price: selected.price,
+      imagePath,
+    });
+  };
 
-  const addToCart = () =>
-    addItem(
-      {
-        variantId: selected.id,
-        productId,
-        productSlug,
-        productName,
-        variantTitle: selected.title,
-        price: selected.price,
-        imagePath,
-      },
-      qty,
-    );
+  const AddBar = ({ fixed }: { fixed?: boolean }) => (
+    <div
+      className={`flex items-center gap-2 rounded-full bg-neutral-100 p-2 pl-5 shadow-md ${
+        fixed ? "" : ""
+      }`}
+    >
+      <span className="font-heading text-[19px]">
+        {formatINR(selected.price)}
+      </span>
+      <button
+        type="button"
+        disabled={!selected.in_stock}
+        onClick={addToCart}
+        className="flex-1 rounded-full bg-accent px-5 py-3 text-center text-[15px] font-bold text-bg transition-colors hover:bg-accent-600 active:bg-accent-700 disabled:cursor-not-allowed disabled:bg-neutral-400"
+      >
+        {selected.in_stock ? "Add to cart" : "Sold out"}
+      </button>
+    </div>
+  );
 
   return (
     <>
-      <div className="border-2 border-ink bg-paper p-5">
-        <div className="flex flex-wrap items-baseline gap-3">
-          <span className="font-display text-4xl">{formatINR(selected.price)}</span>
-          {selected.compare_at_price != null && (
-            <>
-              <s className="text-lg text-soft">
-                {formatINR(selected.compare_at_price)}
-              </s>
-              <span className="label bg-turmeric px-2 py-1 text-ink">
-                Save {formatINR(selected.compare_at_price - selected.price)}
-              </span>
-            </>
-          )}
-        </div>
-
-        <p className="mt-1 text-sm">
-          {!selected.in_stock ? (
-            <span className="font-bold text-chilli">Out of stock</span>
-          ) : lowStock ? (
-            <span className="font-bold text-chilli">
-              Only {selected.stock} left
-            </span>
-          ) : (
-            <span className="text-leaf">In stock</span>
-          )}
-          <span className="ml-2 text-xs text-soft">SKU {selected.sku}</span>
+      <div>
+        <p className="text-[13px] font-bold uppercase tracking-wide text-neutral-600">
+          Pack size
         </p>
-
-        {variants.length > 1 && (
-          <fieldset className="mt-5">
-            <legend className="label text-soft">Size</legend>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {variants.map((v) => (
-                <button
-                  key={v.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedId(v.id);
-                    setQty(1);
-                  }}
-                  className={`cursor-pointer border px-4 py-2.5 text-sm font-bold transition-colors ${
-                    v.id === selected.id
-                      ? "border-ink bg-ink text-paper"
-                      : "border-ink/30 hover:border-ink"
-                  } ${!v.in_stock ? "opacity-50" : ""}`}
-                >
-                  {v.title}
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          {variants.map((v) => {
+            const active = v.id === selected.id;
+            return (
+              <button
+                key={v.id}
+                type="button"
+                onClick={() => setSelectedId(v.id)}
+                className={`rounded-md px-2 py-3 text-center transition-colors ${
+                  active
+                    ? "border-2 border-accent bg-accent-100 text-accent-800"
+                    : "border-[1.5px] border-neutral-300 bg-neutral-100 hover:border-neutral-400"
+                } ${!v.in_stock ? "opacity-50" : ""}`}
+              >
+                <span className="block text-[15px] font-bold">{v.title}</span>
+                <span className="block text-[13px] text-neutral-600">
+                  {formatINR(v.price)}
                   {!v.in_stock && " · sold out"}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-        )}
-
-        <div className="mt-6 flex items-center gap-4">
-          <div className="inline-flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Decrease quantity"
-              onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="grid size-11 cursor-pointer place-items-center border border-ink/30 hover:bg-ink hover:text-paper"
-            >
-              −
-            </button>
-            <span className="w-8 text-center font-bold">{qty}</span>
-            <button
-              type="button"
-              aria-label="Increase quantity"
-              onClick={() => setQty((q) => q + 1)}
-              className="grid size-11 cursor-pointer place-items-center border border-ink/30 hover:bg-ink hover:text-paper"
-            >
-              +
-            </button>
-          </div>
-          <button
-            type="button"
-            disabled={!selected.in_stock}
-            onClick={addToCart}
-            className="label flex-1 cursor-pointer bg-chilli py-4 text-paper transition-colors hover:bg-chilli-deep disabled:cursor-not-allowed disabled:bg-soft"
-          >
-            {selected.in_stock ? "Add to basket" : "Sold out"}
-          </button>
+                </span>
+              </button>
+            );
+          })}
         </div>
+
+        {selected.compare_at_price != null && selected.in_stock && (
+          <p className="mt-3 flex items-center gap-2 text-[13px]">
+            <s className="text-neutral-500">
+              {formatINR(selected.compare_at_price)}
+            </s>
+            <span className="rounded-full bg-sage-100 px-2 py-0.5 font-bold text-sage-800">
+              Save {formatINR(selected.compare_at_price - selected.price)}
+            </span>
+          </p>
+        )}
       </div>
 
-      {/* Mobile: sticky buy bar so the price and CTA travel with the thumb. */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-paper px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
-        <div className="mx-auto flex max-w-6xl items-center gap-4">
-          <div className="min-w-0">
-            <p className="font-display text-2xl leading-none">
-              {formatINR(selected.price * qty)}
-            </p>
-            <p className="mt-1 truncate text-xs text-soft">
-              {selected.title}
-              {qty > 1 && ` × ${qty}`}
-            </p>
-          </div>
-          <button
-            type="button"
-            disabled={!selected.in_stock}
-            onClick={addToCart}
-            className="label flex-1 cursor-pointer bg-chilli py-4 text-paper transition-colors hover:bg-chilli-deep disabled:cursor-not-allowed disabled:bg-soft"
-          >
-            {selected.in_stock ? "Add to basket" : "Sold out"}
-          </button>
+      {/* Desktop / inline add bar */}
+      <div className="mt-5 hidden lg:block">
+        <AddBar />
+      </div>
+
+      {/* Mobile: sticky add bar riding just above the bottom tab bar. */}
+      <div className="fixed inset-x-0 bottom-[68px] z-30 px-4 pb-[env(safe-area-inset-bottom)] lg:hidden">
+        <div className="mx-auto max-w-[1160px]">
+          <AddBar fixed />
         </div>
       </div>
     </>

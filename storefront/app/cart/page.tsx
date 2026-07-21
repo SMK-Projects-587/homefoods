@@ -3,143 +3,117 @@
 import Link from "next/link";
 import CatalogImage from "@/components/catalog-image";
 import QtyStepper from "@/components/qty-stepper";
+import CheckoutButton from "@/components/checkout-button";
 import { useCart } from "@/lib/cart";
 import { formatINR } from "@/lib/format";
 
 export default function CartPage() {
-  const { items, hydrated, subtotal, count, setQty, removeItem, clear } =
-    useCart();
+  const { items, hydrated, subtotal, count, setQty, removeItem } = useCart();
 
   return (
-    // extra bottom padding on mobile clears the sticky checkout bar
-    <div className="mx-auto max-w-6xl px-4 pb-32 pt-8 sm:pt-12 lg:pb-12">
-      <p className="label text-chilli">Your basket</p>
-      <h1 className="mt-2 font-display text-4xl sm:text-5xl">
-        {count > 0 ? `${count} ${count === 1 ? "jar" : "jars"} packed` : "Cart"}
-      </h1>
+    <div className="mx-auto max-w-[720px] px-4 py-8 sm:px-[22px] sm:py-10">
+      <h1 className="font-heading text-[30px]">Your basket</h1>
 
       {!hydrated ? null : items.length === 0 ? (
-        <div className="mt-12 border border-line bg-cream p-16 text-center">
-          <p className="font-display text-4xl italic">Nothing pickled yet.</p>
-          <p className="mt-3 text-soft">
-            The jars are waiting — go find your avakaya.
+        <div className="mt-10 flex flex-col items-center gap-3 rounded-lg bg-neutral-100 p-12 text-center">
+          <span className="grid size-[72px] place-items-center rounded-full bg-accent-100 text-accent-700">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-8">
+              <circle cx="9" cy="20" r="1.4" />
+              <circle cx="18" cy="20" r="1.4" />
+              <path d="M2.5 3h2l2.2 12.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.3L21 7H6" />
+            </svg>
+          </span>
+          <p className="font-heading text-[21px]">Your basket is empty</p>
+          <p className="text-[14px] text-neutral-600">
+            Go find your avakaya — the jars are waiting.
           </p>
           <Link
             href="/products"
-            className="label mt-8 inline-block bg-chilli px-8 py-4 text-paper transition-colors hover:bg-chilli-deep"
+            className="mt-2 rounded-full bg-accent px-6 py-3 text-[14px] font-bold text-bg transition-colors hover:bg-accent-600"
           >
-            Browse the pantry
+            Start shopping
           </Link>
         </div>
       ) : (
-        <div className="mt-10 grid gap-10 lg:grid-cols-[2fr_1fr]">
-          <div>
-            <ul className="divide-y divide-line border-y border-line">
-              {items.map((item) => (
-                <li key={item.variantId} className="flex gap-4 py-5 sm:gap-5">
-                  <Link
-                    href={`/products/${item.productSlug}`}
-                    className="block size-20 shrink-0 overflow-hidden border border-line sm:size-24"
-                  >
-                    <CatalogImage
-                      path={item.imagePath}
-                      alt={item.productName}
-                      name={item.productName}
-                      className="size-full object-cover"
-                    />
-                  </Link>
-                  <div className="min-w-0 flex-1">
+        <div className="mt-6 space-y-6">
+          <ul className="space-y-3">
+            {items.map((item) => (
+              <li
+                key={item.variantId}
+                className="flex gap-3 rounded-lg bg-neutral-100 p-3 shadow-sm"
+              >
+                <Link
+                  href={`/products/${item.productSlug}`}
+                  className="block size-[54px] shrink-0 overflow-hidden rounded-[12px] bg-surface"
+                >
+                  <CatalogImage
+                    path={item.imagePath}
+                    alt={item.productName}
+                    name={item.productName}
+                    className="washed size-full object-cover"
+                  />
+                </Link>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
                     <Link
                       href={`/products/${item.productSlug}`}
-                      className="font-display text-xl leading-tight hover:text-chilli"
+                      className="text-[14.5px] font-bold leading-tight hover:text-accent-700"
                     >
                       {item.productName}
                     </Link>
-                    <p className="text-sm text-soft">{item.variantTitle}</p>
-                    <p className="mt-1 text-sm text-soft">
-                      {formatINR(item.price)} each
-                    </p>
-                    <div className="mt-3 flex items-center gap-6">
-                      <QtyStepper
-                        small
-                        qty={item.qty}
-                        onChange={(q) => setQty(item.variantId, q)}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeItem(item.variantId)}
-                        className="label cursor-pointer text-soft transition-colors hover:text-chilli"
-                      >
-                        Remove
-                      </button>
-                    </div>
+                    <span className="shrink-0 text-[15px] font-bold">
+                      {formatINR(item.price * item.qty)}
+                    </span>
                   </div>
-                  <span className="text-sm font-bold sm:text-base">
-                    {formatINR(item.price * item.qty)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4 flex justify-between">
-              <Link href="/products" className="label text-chilli hover:underline">
-                ← Keep shopping
-              </Link>
-              <button
-                type="button"
-                onClick={clear}
-                className="label cursor-pointer text-soft transition-colors hover:text-chilli"
-              >
-                Empty the basket
-              </button>
-            </div>
-          </div>
+                  <p className="text-[12.5px] text-neutral-600">
+                    {item.variantTitle} · {formatINR(item.price)}
+                  </p>
+                  <div className="mt-2 flex items-center gap-4">
+                    <QtyStepper
+                      small
+                      qty={item.qty}
+                      onChange={(q) => setQty(item.variantId, q)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeItem(item.variantId)}
+                      className="cursor-pointer text-[13px] font-semibold text-neutral-500 transition-colors hover:text-accent-700"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
 
-          <aside className="h-fit border-2 border-ink bg-paper p-6">
-            <h2 className="font-display text-2xl">Order summary</h2>
-            <dl className="mt-4 space-y-2 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-soft">Items ({count})</dt>
-                <dd className="font-bold">{formatINR(subtotal)}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-soft">Shipping</dt>
-                <dd className="text-soft">decided on call</dd>
-              </div>
-            </dl>
-            <div className="mt-4 flex items-baseline justify-between border-t-2 border-ink pt-4">
-              <span className="label">Subtotal</span>
-              <span className="font-display text-3xl">{formatINR(subtotal)}</span>
+          <div className="rounded-lg bg-neutral-100 p-[18px] shadow-sm">
+            <div className="flex justify-between text-[14px]">
+              <span className="text-neutral-600">Items ({count})</span>
+              <span className="font-semibold">{formatINR(subtotal)}</span>
             </div>
-            {/* Checkout is intentionally a no-op for now. */}
-            <button
-              type="button"
-              className="label mt-6 w-full cursor-pointer bg-chilli py-4 text-paper transition-colors hover:bg-chilli-deep"
-            >
-              Checkout
-            </button>
-            <p className="mt-3 text-center text-xs text-soft">
-              Online checkout is on its way. For now your basket lives safely
-              in this browser.
+            <div className="my-3 h-px bg-neutral-200" />
+            <div className="flex items-baseline justify-between">
+              <span className="text-[17px] font-bold">Total</span>
+              <span className="font-heading text-[22px]">
+                {formatINR(subtotal)}
+              </span>
+            </div>
+            <div className="mt-4">
+              <CheckoutButton />
+            </div>
+            <p className="mt-2 text-center text-[12px] text-neutral-500">
+              Opens WhatsApp with your order pre-filled. Delivery &amp; payment
+              confirmed there.
             </p>
-          </aside>
-
-          {/* Mobile: sticky checkout bar (intentionally a no-op, like above). */}
-          <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-paper px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 lg:hidden">
-            <div className="flex items-center gap-4">
-              <div>
-                <p className="label text-soft">Subtotal</p>
-                <p className="font-display text-2xl leading-none">
-                  {formatINR(subtotal)}
-                </p>
-              </div>
-              <button
-                type="button"
-                className="label flex-1 cursor-pointer bg-chilli py-4 text-paper transition-colors hover:bg-chilli-deep"
-              >
-                Checkout
-              </button>
-            </div>
           </div>
+
+          <Link
+            href="/products"
+            className="inline-block text-[14px] font-bold text-accent-700 hover:underline"
+          >
+            ← Keep shopping
+          </Link>
         </div>
       )}
     </div>

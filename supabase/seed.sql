@@ -5,57 +5,57 @@
 -- ---------------------------------------------------------------------------
 -- Categories
 -- ---------------------------------------------------------------------------
-insert into public.categories (name, description) values
-  ('Pickles', 'Traditional Andhra-style pickles made in small batches.'),
-  ('Spice Powders', 'Podis and spice blends, stone-ground the old way.'),
-  ('Snacks', 'Crunchy South Indian savouries.'),
-  ('Sweets', 'Festive sweets made with ghee and jaggery.');
+insert into public.categories (name, native_name, description) values
+  ('Pickles', 'ఊరగాయలు', 'Traditional Andhra-style pickles made in small batches.'),
+  ('Spice Powders', 'పొడులు', 'Podis and spice blends, stone-ground the old way.'),
+  ('Snacks', 'చిరుతిళ్లు', 'Crunchy South Indian savouries.'),
+  ('Sweets', 'తీపి వంటలు', 'Festive sweets made with ghee and jaggery.');
 
 -- ---------------------------------------------------------------------------
 -- Products (Telugu/Indian names exercise the 'simple' search config —
 -- 'english' stemming would mangle words like "Avakaya" or "Gongura")
 -- ---------------------------------------------------------------------------
-insert into public.products (name, category_id, description, keywords) values
-  ('Avakaya Mango Pickle',
+insert into public.products (name, native_name, category_id, description, keywords) values
+  ('Avakaya Mango Pickle', 'అవకాయ',
    (select id from public.categories where slug = 'pickles'),
    'Classic Andhra avakaya made with raw mango, mustard, and cold-pressed gingelly oil.',
    '{avakaya,aavakaya,mango pickle,andhra pickle,mamidikaya}'),
-  ('Gongura Pickle',
+  ('Gongura Pickle', 'గోంగూర ఊరగాయ',
    (select id from public.categories where slug = 'pickles'),
    'Tangy gongura (sorrel leaf) pickle, a Telugu household staple.',
    '{gongura,sorrel leaves,pulihora,andhra pickle}'),
-  ('Nimmakaya Lemon Pickle',
+  ('Nimmakaya Lemon Pickle', 'నిమ్మకాయ ఊరగాయ',
    (select id from public.categories where slug = 'pickles'),
    'Sun-cured lemon pickle with a sharp, salty tang.',
    '{nimmakaya,lemon pickle,nimbu achar}'),
-  ('Kandi Podi',
+  ('Kandi Podi', 'కంది పొడి',
    (select id from public.categories where slug = 'spice-powders'),
    'Roasted toor dal spice powder, best mixed with hot rice and ghee.',
    '{kandi podi,paruppu podi,dal powder,podi}'),
-  ('Karam Podi',
+  ('Karam Podi', 'కారం పొడి',
    (select id from public.categories where slug = 'spice-powders'),
    'Fiery red chilli podi, also known as gunpowder, for idli and dosa.',
    '{karam podi,gunpowder,idli podi,chilli powder}'),
-  ('Murukulu',
+  ('Murukulu', 'మురుకులు',
    (select id from public.categories where slug = 'snacks'),
    'Hand-twisted rice flour spirals, deep-fried until golden.',
    '{murukulu,murukku,chakli,jantikalu}'),
-  ('Pappu Chekkalu',
+  ('Pappu Chekkalu', 'పప్పు చెక్కలు',
    (select id from public.categories where slug = 'snacks'),
    'Crisp rice crackers studded with chana dal and curry leaves.',
    '{chekkalu,pappu chekkalu,rice crackers,nippattu}'),
-  ('Kaju Katli',
+  ('Kaju Katli', 'కాజు కత్లీ',
    (select id from public.categories where slug = 'sweets'),
    'Silky cashew fudge finished with edible silver leaf.',
    '{kaju katli,kaju barfi,cashew sweet}'),
-  ('Bandar Laddu',
+  ('Bandar Laddu', 'బందరు లడ్డు',
    (select id from public.categories where slug = 'sweets'),
    'Gram-flour laddus from the Machilipatnam tradition, rich with ghee.',
    '{bandar laddu,boondi laddu,laddu,senaga pindi}');
 
 -- Inactive product: must be invisible to anon, visible to staff.
-insert into public.products (name, category_id, description, keywords, is_active) values
-  ('Ariselu (Seasonal)',
+insert into public.products (name, native_name, category_id, description, keywords, is_active) values
+  ('Ariselu (Seasonal)', 'అరిసెలు',
    (select id from public.categories where slug = 'sweets'),
    'Rice-and-jaggery festival sweet, made only around Sankranti.',
    '{ariselu,adhirasam,jaggery sweet,sankranti}',

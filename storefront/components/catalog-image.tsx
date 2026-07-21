@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { productImageUrl } from "@/lib/supabase";
 
+// Warm, on-palette fallback tones — seeded per name so a product always gets
+// the same tile. Soft accent/sage/neutral washes, never a harsh block colour.
 const TONES = [
-  { bg: "#a62c15", fg: "#f8f1e2" }, // chilli
-  { bg: "#dda11e", fg: "#2b1a0e" }, // turmeric
-  { bg: "#5a7040", fg: "#f8f1e2" }, // leaf
-  { bg: "#7c1e0e", fg: "#f2cf85" }, // deep chilli
+  { a: "#ffe1d0", b: "#ffc6a5", ink: "#8c491a" }, // terracotta
+  { a: "#e1eecc", b: "#ccdbb2", ink: "#56633f" }, // sage
+  { a: "#f9f4ed", b: "#dcd3c4", ink: "#645c50" }, // neutral
+  { a: "#fff2eb", b: "#f6a06b", ink: "#643312" }, // deep terracotta
 ];
 
 function tone(seed: string) {
@@ -18,9 +20,11 @@ function tone(seed: string) {
 
 function initials(name: string) {
   return name
+    .replace(/\(.*?\)/g, "")
     .split(/\s+/)
+    .filter(Boolean)
     .slice(0, 2)
-    .map((w) => w[0])
+    .map((w) => w[0]?.toUpperCase() ?? "")
     .join("");
 }
 
@@ -29,28 +33,47 @@ function Placeholder({ name, className }: { name: string; className?: string }) 
   return (
     <div
       aria-hidden
-      className={`grid place-items-center ${className ?? ""}`}
+      className={`relative grid place-items-center overflow-hidden ${className ?? ""}`}
       style={{
-        backgroundColor: t.bg,
-        color: t.fg,
-        backgroundImage:
-          "radial-gradient(currentColor 1px, transparent 1px), radial-gradient(currentColor 1px, transparent 1px)",
-        backgroundSize: "22px 22px, 22px 22px",
-        backgroundPosition: "0 0, 11px 11px",
+        containerType: "inline-size",
+        backgroundImage: `radial-gradient(120% 120% at 30% 20%, ${t.a} 0%, ${t.b} 100%)`,
       }}
     >
-      <span
-        className="font-display italic opacity-90"
-        style={{ fontSize: "clamp(2rem, 30cqw, 5rem)" }}
-      >
-        {initials(name)}
-      </span>
+      {/* faint concentric rings, like a jar seen from above */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-40"
+        style={{
+          backgroundImage: `repeating-radial-gradient(circle at 50% 55%, transparent 0 13px, ${t.ink}14 13px 14px)`,
+        }}
+      />
+      <div className="relative flex flex-col items-center gap-[4cqw]" style={{ color: t.ink }}>
+        {/* leaf mark */}
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="opacity-70"
+          style={{ width: "16cqw", height: "16cqw" }}
+        >
+          <path d="M11 20A7 7 0 0 1 4 13C4 8 8 4 13 4c3 0 7 1 7 1s-1 4-1 7a7 7 0 0 1-8 8Z" />
+          <path d="M8 17c2-3 5-5 8-6" />
+        </svg>
+        <span
+          className="font-heading leading-none"
+          style={{ fontSize: "34cqw" }}
+        >
+          {initials(name)}
+        </span>
+      </div>
     </div>
   );
 }
 
-// Seeded image paths point at objects that may not exist in the local
-// bucket yet, so a failed load falls back to a decorative tile.
+// Seeded image paths point at objects that may not exist in the local bucket
+// yet, so a failed load falls back to a decorative on-palette tile.
 export default function CatalogImage({
   path,
   alt,

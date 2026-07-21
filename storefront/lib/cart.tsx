@@ -16,6 +16,7 @@ export type CartItem = {
   productSlug: string;
   productName: string;
   variantTitle: string;
+  sku: string;
   price: number;
   imagePath: string | null;
   qty: number;
@@ -37,7 +38,8 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-const STORAGE_KEY = "homefoods:cart:v1";
+// v2 adds `sku` to line items (used by the WhatsApp order message).
+const STORAGE_KEY = "homefoods:cart:v2";
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);

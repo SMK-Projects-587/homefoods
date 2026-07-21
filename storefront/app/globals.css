@@ -1,68 +1,132 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  --font-body: var(--font-karla), ui-sans-serif, system-ui, sans-serif;
-  --font-telugu: var(--font-noto-telugu), var(--font-fraunces), serif;
+  --font-heading: var(--font-caprasimo), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-telugu: var(--font-noto-telugu), var(--font-figtree), sans-serif;
+  /* legacy alias — some components still say font-display */
+  --font-display: var(--font-caprasimo), Georgia, serif;
 }
 
 @theme {
-  /* warm grocer palette: cream paper, deep brown ink, chilli + turmeric */
-  --color-paper: #f8f1e2;
-  --color-cream: #efe3c9;
-  --color-ink: #2b1a0e;
-  --color-soft: #74604a;
-  --color-chilli: #a62c15;
-  --color-chilli-deep: #7c1e0e;
+  /* ── Organic design system — Andhra HomeFoods ──────────────────────────
+     Ported from the design handoff's Organic token set. Terracotta + sage on
+     a warm cream ground, with tonal ramps generated on one OKLCH lightness
+     scale so the same step of any role matches in visual value. */
+  --color-bg: #f5ead8;
+  --color-surface: #ebddc5;
+  --color-ink: #201e1d;
+
+  --color-accent: #c67139; /* terracotta */
+  --color-sage: #7a8a5e; /* accent-2 */
+  --color-line: color-mix(in srgb, #201e1d 16%, transparent);
+
+  --color-neutral-100: #f9f4ed;
+  --color-neutral-200: #eee7db;
+  --color-neutral-300: #dcd3c4;
+  --color-neutral-400: #c0b6a5;
+  --color-neutral-500: #a19786;
+  --color-neutral-600: #82796a;
+  --color-neutral-700: #645c50;
+  --color-neutral-800: #474238;
+  --color-neutral-900: #2e2b25;
+
+  --color-accent-100: #fff2eb;
+  --color-accent-200: #ffe1d0;
+  --color-accent-300: #ffc6a5;
+  --color-accent-400: #f6a06b;
+  --color-accent-500: #d67f48;
+  --color-accent-600: #b2622d;
+  --color-accent-700: #8c491a;
+  --color-accent-800: #643312;
+  --color-accent-900: #402310;
+
+  --color-sage-100: #f0fae1;
+  --color-sage-200: #e1eecc;
+  --color-sage-300: #ccdbb2;
+  --color-sage-400: #aebf92;
+  --color-sage-500: #8fa073;
+  --color-sage-600: #728157;
+  --color-sage-700: #56633f;
+  --color-sage-800: #3d472b;
+  --color-sage-900: #272e1b;
+
+  /* ── Legacy aliases — keep older utility names rendering on-palette while
+     components migrate. chilli→terracotta, leaf→sage, paper/cream→ground. */
+  --color-paper: #f5ead8;
+  --color-cream: #ebddc5;
+  --color-soft: #82796a;
+  --color-chilli: #c67139;
+  --color-chilli-deep: #b2622d;
   --color-turmeric: #dda11e;
   --color-turmeric-soft: #f2cf85;
-  --color-leaf: #5a7040;
-  --color-line: #2b1a0e2b;
+  --color-leaf: #7a8a5e;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
 
   --animate-marquee: marquee 36s linear infinite;
-  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-rise: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-slide-up: slide-up 0.25s ease both;
+  --animate-slide-in: slide-in 0.25s ease both;
+  --animate-fade: fade 0.2s ease both;
 }
 
 @keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
-
 @keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+@keyframes slide-in {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @layer base {
   body {
-    background-color: var(--color-paper);
+    background-color: var(--color-bg);
     color: var(--color-ink);
     font-family: var(--font-body);
-    /* faint dotted paper grain */
-    background-image: radial-gradient(
-      color-mix(in srgb, var(--color-ink) 7%, transparent) 0.5px,
-      transparent 0.5px
-    );
-    background-size: 26px 26px;
+    font-size: 15px;
+    line-height: 1.55;
   }
-
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
+  }
   ::selection {
-    background-color: var(--color-chilli);
-    color: var(--color-paper);
+    background-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 }
 
-/* hide horizontal scrollbars on chip/category rails */
+/* Washed-photo treatment from the design system — desaturated, gentle. */
+@utility washed {
+  filter: saturate(0.7) contrast(0.9) brightness(1.06);
+}
+
+/* hide horizontal scrollbars on chip / category / bestseller rails */
 @utility no-scrollbar {
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -71,12 +135,17 @@
 }
 
 @layer components {
-  /* tiny uppercase editorial label used throughout */
+  /* tiny uppercase editorial label */
   .label {
     font-family: var(--font-body);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
+  }
+  /* Telugu accent line shown beneath English names */
+  .telugu {
+    font-family: var(--font-telugu);
+    font-weight: 600;
   }
 }
