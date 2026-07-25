@@ -1,6 +1,11 @@
 import Link from "next/link";
 import type { Category } from "@/lib/catalog";
 
+// Copyright year, evaluated once at module load (build time) rather than during
+// render — Cache Components forbids `new Date()` in the prerendered shell. A
+// year-stale copyright between a New Year and the next deploy is immaterial.
+const COPYRIGHT_YEAR = new Date().getFullYear();
+
 export default function Footer({ categories }: { categories: Category[] }) {
   return (
     <footer className="mt-12 border-t border-line bg-surface">
@@ -58,7 +63,7 @@ export default function Footer({ categories }: { categories: Category[] }) {
         </div>
       </div>
       <p className="border-t border-line py-4 text-center text-[12px] text-neutral-500">
-        © {new Date().getFullYear()} Andhra HomeFoods · Vizianagaram, Andhra
+        © {COPYRIGHT_YEAR} Andhra HomeFoods · Vizianagaram, Andhra
         Pradesh
       </p>
     </footer>

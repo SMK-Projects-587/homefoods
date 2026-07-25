@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Caprasimo, Figtree, Noto_Sans_Telugu } from "next/font/google";
 import "./globals.css";
-import { getCategories } from "@/lib/catalog";
+import { getCategories } from "@/lib/catalog.server";
 import { CartProvider } from "@/lib/cart";
 import { SearchProvider } from "@/lib/search";
 import Header from "@/components/header";
@@ -122,11 +123,27 @@ export default async function RootLayout({
         <JsonLd data={websiteJsonLd} />
         <CartProvider>
           <SearchProvider>
-            <Header />
+            {/* Header/BottomNav read usePathname() for active-nav state, which
+                is request data — under Cache Components they can't be in the
+                prerendered static shell of dynamic routes, so they stream in
+                behind a same-size placeholder (no layout shift). */}
+            <Suspense
+              fallback={
+                <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
+                  <div className="mx-auto flex max-w-[1160px] items-center gap-4 px-4 py-3 sm:px-[22px]">
+                    <div className="size-[38px]" />
+                  </div>
+                </header>
+              }
+            >
+              <Header />
+            </Suspense>
             {/* pb clears the fixed mobile tab bar (hidden ≥ lg) */}
             <main className="min-h-[70vh] pb-24 lg:pb-0">{children}</main>
             <Footer categories={categories} />
-            <BottomNav />
+            <Suspense fallback={null}>
+              <BottomNav />
+            </Suspense>
             <CartSidebar />
             <SearchOverlay />
           </SearchProvider>

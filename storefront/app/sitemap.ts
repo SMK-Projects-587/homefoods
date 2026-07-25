@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getCategories, getProducts } from "@/lib/catalog";
+import { getCategories, getProducts } from "@/lib/catalog.server";
 import { absoluteUrl } from "@/lib/site";
 
 // Regenerate the sitemap periodically rather than on every crawl.
-export const revalidate = 3600;
+// Data is cached per-fetch via `use cache` in lib/catalog.server.
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [categories, products] = await Promise.all([

@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import CatalogImage from "@/components/catalog-image";
 import ProductCard from "@/components/product-card";
-import { getCategories, getProducts } from "@/lib/catalog";
+import { getCategories, getProducts } from "@/lib/catalog.server";
 
-// ISR: re-render at most every 10 minutes instead of on every request.
-export const revalidate = 600;
+// Data is cached per-fetch via `use cache` + cacheTag in lib/catalog.server,
+// invalidated on catalog changes through /api/revalidate (Cache Components).
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },

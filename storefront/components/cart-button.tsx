@@ -1,9 +1,10 @@
 "use client";
 
 import { useCart } from "@/lib/cart";
+import CartCountBadge from "./cart-count-badge";
 
 export default function CartButton() {
-  const { count, hydrated, openCart } = useCart();
+  const { openCart } = useCart();
   return (
     <button
       type="button"
@@ -24,11 +25,7 @@ export default function CartButton() {
         <circle cx="18" cy="20" r="1.4" />
         <path d="M2.5 3h2l2.2 12.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.3L21 7H6" />
       </svg>
-      {hydrated && count > 0 && (
-        <span className="absolute -right-1 -top-1 grid min-w-5 place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-bg">
-          {count}
-        </span>
-      )}
+      <CartCountBadge className="absolute -right-1 -top-1 grid min-w-5 place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-bg" />
     </button>
   );
 }

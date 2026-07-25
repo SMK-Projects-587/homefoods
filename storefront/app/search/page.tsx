@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import ProductCard from "@/components/product-card";
 import SearchBar from "@/components/search-bar";
-import { getProducts } from "@/lib/catalog";
-
-export const dynamic = "force-dynamic";
+import { getProducts } from "@/lib/catalog.server";
 
 // Utility screen — keep it out of the index (desktop uses the overlay anyway).
 export const metadata: Metadata = {

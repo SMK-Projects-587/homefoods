@@ -5,12 +5,11 @@ import BuyBox from "@/components/buy-box";
 import CatalogImage from "@/components/catalog-image";
 import ProductCard from "@/components/product-card";
 import JsonLd from "@/components/json-ld";
-import { getProductBySlug, getProducts } from "@/lib/catalog";
+import { getProductBySlug, getProducts } from "@/lib/catalog.server";
 import { productImageUrl } from "@/lib/supabase";
 import { SITE_NAME, absoluteUrl } from "@/lib/site";
 
-// ISR: product pages re-render at most every 10 minutes.
-export const revalidate = 600;
+// Data is cached per-fetch via `use cache` + cacheTag in lib/catalog.server.
 
 export async function generateMetadata({
   params,

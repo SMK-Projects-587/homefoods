@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart";
 import { useSearch } from "@/lib/search";
+import CartCountBadge from "./cart-count-badge";
 
 function Icon({ name }: { name: "home" | "shop" | "search" | "cart" }) {
   const common = {
@@ -48,7 +49,7 @@ function Icon({ name }: { name: "home" | "shop" | "search" | "cart" }) {
 export default function BottomNav() {
   const pathname = usePathname();
   const { open } = useSearch();
-  const { count, hydrated, openCart } = useCart();
+  const { openCart } = useCart();
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -87,11 +88,7 @@ export default function BottomNav() {
         >
           <span className="relative">
             <Icon name="cart" />
-            {hydrated && count > 0 && (
-              <span className="absolute -right-2 -top-1.5 grid min-w-4 place-items-center rounded-full bg-accent px-1 text-[9px] font-bold text-bg">
-                {count}
-              </span>
-            )}
+            <CartCountBadge className="absolute -right-2 -top-1.5 grid min-w-4 place-items-center rounded-full bg-accent px-1 text-[9px] font-bold text-bg" />
           </span>
           Cart
         </button>

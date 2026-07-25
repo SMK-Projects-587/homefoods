@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ProductCard from "@/components/product-card";
 import JsonLd from "@/components/json-ld";
-import { getCategories, getCategoryBySlug, getProducts } from "@/lib/catalog";
+import { getCategories, getCategoryBySlug, getProducts } from "@/lib/catalog.server";
 import { absoluteUrl } from "@/lib/site";
 
-export const revalidate = 600;
+// Data is cached per-fetch via `use cache` + cacheTag in lib/catalog.server.
 
 export async function generateMetadata({
   params,

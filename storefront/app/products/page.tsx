@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import ProductCard from "@/components/product-card";
-import { getCategories, getProducts, searchProducts } from "@/lib/catalog";
+import { searchProducts } from "@/lib/catalog";
+import { getCategories, getProducts } from "@/lib/catalog.server";
 
-export const dynamic = "force-dynamic";
+// Dynamic by virtue of reading searchParams (wrapped in <Suspense>); under
+// Cache Components no route directive is needed or allowed.
 
 export async function generateMetadata({
   searchParams,
