@@ -62,9 +62,9 @@
   --color-turmeric-soft: #f2cf85;
   --color-leaf: #7a8a5e;
 
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 28px;
+  --radius-sm: 6px;
+  --radius-md: 11px;
+  --radius-lg: 20px;
 
   --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
   --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
@@ -118,6 +118,9 @@
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+  }
+  button:not(:disabled) {
+    cursor: pointer;
   }
 }
 

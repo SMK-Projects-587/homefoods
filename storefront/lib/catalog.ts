@@ -29,12 +29,15 @@ export type ImageRow = Pick<
   "id" | "image_path" | "alt_text" | "is_primary" | "sort_order"
 >;
 
-// The default variant a card's quick-add button drops into the cart.
+// A pack-size option shown in the card's variant-picker drawer (and the
+// default variant used for the card's price line).
 export type CardVariant = {
   id: number;
   title: string;
   sku: string;
   price: number;
+  compareAtPrice: number | null;
+  inStock: boolean;
 };
 
 export type ProductCardData = {
@@ -52,6 +55,9 @@ export type ProductCardData = {
   // null when we can't resolve a default variant (e.g. search RPC cards);
   // the card falls back to linking through to the product page.
   defaultVariant: CardVariant | null;
+  // All pack sizes, for the quick-add variant drawer. Empty for search RPC
+  // cards (same reason as defaultVariant above) — those link through instead.
+  variants: CardVariant[];
 };
 
 export type ProductDetail = {
@@ -98,5 +104,6 @@ export async function searchProducts(
     categorySlug: row.category_slug_out || null,
     variantCount: null,
     defaultVariant: null,
+    variants: [],
   }));
 }

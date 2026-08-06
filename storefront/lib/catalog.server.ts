@@ -63,8 +63,25 @@ function toCard(row: CardRow): ProductCardData {
     variantCount: variants.length,
     defaultVariant:
       def && def.in_stock
-        ? { id: def.id, title: def.title, sku: def.sku, price: def.price }
+        ? {
+            id: def.id,
+            title: def.title,
+            sku: def.sku,
+            price: def.price,
+            compareAtPrice: def.compare_at_price,
+            inStock: def.in_stock,
+          }
         : null,
+    variants: [...variants]
+      .sort((a, b) => a.price - b.price)
+      .map((v) => ({
+        id: v.id,
+        title: v.title,
+        sku: v.sku,
+        price: v.price,
+        compareAtPrice: v.compare_at_price,
+        inStock: v.in_stock,
+      })),
   };
 }
 

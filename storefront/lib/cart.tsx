@@ -30,7 +30,11 @@ type CartContextValue = {
   subtotal: number;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (item: Omit<CartItem, "qty">, qty?: number) => void;
+  addItem: (
+    item: Omit<CartItem, "qty">,
+    qty?: number,
+    opts?: { silent?: boolean },
+  ) => void;
   removeItem: (variantId: number) => void;
   setQty: (variantId: number, qty: number) => void;
   clear: () => void;
@@ -70,18 +74,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
 
-  const addItem = useCallback((item: Omit<CartItem, "qty">, qty = 1) => {
-    setItems((prev) => {
-      const existing = prev.find((i) => i.variantId === item.variantId);
-      if (existing) {
-        return prev.map((i) =>
-          i.variantId === item.variantId ? { ...i, qty: i.qty + qty } : i,
-        );
-      }
-      return [...prev, { ...item, qty }];
-    });
-    setIsOpen(true);
-  }, []);
+  const addItem = useCallback(
+    (
+      item: Omit<CartItem, "qty">,
+      qty = 1,
+      opts?: { silent?: boolean },
+    ) => {
+      setItems((prev) => {
+        const existing = prev.find((i) => i.variantId === item.variantId);
+        if (existing) {
+          return prev.map((i) =>
+            i.variantId === item.variantId ? { ...i, qty: i.qty + qty } : i,
+          );
+        }
+        return [...prev, { ...item, qty }];
+      });
+      // The variant drawer adds silently — popping the cart sidebar open
+      // behind/over an open drawer while the user is still picking sizes
+      // looks broken, especially where both are bottom sheets on mobile.
+      if (!opts?.silent) setIsOpen(true);
+    },
+    [],
+  );
 
   const removeItem = useCallback((variantId: number) => {
     setItems((prev) => prev.filter((i) => i.variantId !== variantId));

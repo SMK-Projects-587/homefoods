@@ -9,8 +9,14 @@ import QtyStepper from "./qty-stepper";
 import CheckoutButton from "./checkout-button";
 
 export default function CartSidebar() {
-  const { items, isOpen, closeCart, removeItem, setQty, subtotal, count } =
+  const { items, isOpen, closeCart, removeItem, setQty, subtotal, count, clear } =
     useCart();
+
+  const onClear = () => {
+    // A plain confirm() is enough friction that a stray tap can't wipe the
+    // basket — no extra state/UI needed for something this rare.
+    if (window.confirm("Clear your basket?")) clear();
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -34,7 +40,7 @@ export default function CartSidebar() {
       />
       <aside
         aria-label="Shopping basket"
-        className={`fixed inset-x-0 bottom-0 z-50 flex max-h-[78vh] flex-col rounded-t-[28px] bg-bg shadow-lg transition-transform duration-300 ease-out lg:inset-y-0 lg:left-auto lg:right-0 lg:max-h-none lg:h-dvh lg:w-[430px] lg:rounded-[28px_0_0_28px] ${
+        className={`fixed inset-x-0 bottom-0 z-50 flex max-h-[78vh] flex-col rounded-t-[20px] bg-bg shadow-lg transition-transform duration-300 ease-out lg:inset-y-0 lg:left-auto lg:right-0 lg:max-h-none lg:h-dvh lg:w-[430px] lg:rounded-[20px_0_0_20px] ${
           isOpen
             ? "translate-y-0 lg:translate-x-0"
             : "translate-y-full lg:translate-x-full lg:translate-y-0"
@@ -139,6 +145,15 @@ export default function CartSidebar() {
             </ul>
 
             <div className="border-t border-neutral-200 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+              <div className="mb-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={onClear}
+                  className="cursor-pointer text-[12px] font-semibold text-neutral-400 transition-colors hover:text-accent-700"
+                >
+                  Clear cart
+                </button>
+              </div>
               <div className="mb-3 flex items-baseline justify-between">
                 <span className="text-[14px] text-neutral-600">
                   Subtotal

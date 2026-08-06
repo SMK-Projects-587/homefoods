@@ -8,7 +8,14 @@ import { useCart } from "@/lib/cart";
 import { formatINR } from "@/lib/format";
 
 export default function CartPage() {
-  const { items, hydrated, subtotal, count, setQty, removeItem } = useCart();
+  const { items, hydrated, subtotal, count, setQty, removeItem, clear } =
+    useCart();
+
+  const onClear = () => {
+    // A plain confirm() is enough friction that a stray tap can't wipe the
+    // basket — no extra state/UI needed for something this rare.
+    if (window.confirm("Clear your basket?")) clear();
+  };
 
   return (
     <div className="mx-auto max-w-[720px] px-4 py-8 sm:px-[22px] sm:py-10">
@@ -99,7 +106,16 @@ export default function CartPage() {
                 {formatINR(subtotal)}
               </span>
             </div>
-            <div className="mt-4">
+            <div className="mt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={onClear}
+                className="cursor-pointer text-[12px] font-semibold text-neutral-400 transition-colors hover:text-accent-700"
+              >
+                Clear cart
+              </button>
+            </div>
+            <div className="mt-2">
               <CheckoutButton />
             </div>
             <p className="mt-2 text-center text-[12px] text-neutral-500">

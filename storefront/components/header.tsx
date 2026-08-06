@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import CartButton from "./cart-button";
 import { useSearch } from "@/lib/search";
 
@@ -36,16 +37,33 @@ export default function Header() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  // Mobile: stay off-screen at the top of the page and slide in once the
+  // shopper has actually scrolled, instead of permanently occupying the
+  // first ~60px of every screen. Fixed (not sticky) below lg so the hidden
+  // header doesn't still reserve its flow height and leave a blank gap.
+  // Unaffected on lg — see the lg: override below.
+  const [revealed, setRevealed] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setRevealed(window.scrollY > 64);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
+    <header
+      className={`fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md transition-transform duration-300 lg:sticky lg:translate-y-0 ${
+        revealed ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="mx-auto flex max-w-[1160px] items-center gap-4 px-4 py-3 sm:px-[22px]">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5">
+        <Link href="/" className="flex min-w-0 items-center gap-2.5">
           <LeafLogo />
-          <span className="leading-tight">
-            <span className="block font-heading text-[19px]">
+          <span className="min-w-0 leading-tight">
+            <span className="block truncate font-heading text-[19px]">
               Andhra HomeFoods
             </span>
-            <span className="telugu block text-[11px] text-accent-700">
+            <span className="telugu block truncate text-[11px] text-accent-700">
               అమ్మ చేతి రుచి · Since 1992
             </span>
           </span>

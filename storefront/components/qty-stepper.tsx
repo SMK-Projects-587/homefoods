@@ -4,15 +4,20 @@ export default function QtyStepper({
   qty,
   onChange,
   small,
+  className,
 }: {
   qty: number;
   onChange: (qty: number) => void;
   small?: boolean;
+  // Overrides the default neutral-200 pill fill — for contexts that already
+  // give the stepper its own bordered/tinted container, so it doesn't end up
+  // nested inside a second, differently-coloured pill.
+  className?: string;
 }) {
   const size = small ? "size-[30px]" : "size-9";
   const btn = `grid ${size} cursor-pointer place-items-center rounded-full text-neutral-700 transition-colors hover:bg-accent-100 hover:text-accent-700`;
   return (
-    <div className="inline-flex items-center gap-0.5 rounded-full bg-neutral-200 p-0.5">
+    <div className={`inline-flex items-center gap-0.5 rounded-full p-0.5 ${className ?? "bg-neutral-200"}`}>
       <button
         type="button"
         aria-label="Decrease quantity"

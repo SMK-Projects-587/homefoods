@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
       dynamic: 300,
       static: 300,
     },
+    // Turbopack's on-disk dev cache (.next/dev/cache/turbopack) has no built-in
+    // eviction and grew unbounded to multiple GB, which is what was driving
+    // `next dev --turbo`'s RAM use — Turbopack keeps its working set resident.
+    // Cap it; Turbopack will evict old entries once this is hit instead of
+    // growing forever. Raise if rebuilds start thrashing the cache.
+    turbopackMemoryLimit: 1024 * 1024 * 1024, // 1 GiB
   },
 };
 

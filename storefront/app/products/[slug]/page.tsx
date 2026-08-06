@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import BuyBox from "@/components/buy-box";
-import CatalogImage from "@/components/catalog-image";
+import ProductGallery from "@/components/product-gallery";
 import ProductCard from "@/components/product-card";
 import JsonLd from "@/components/json-ld";
 import { getProductBySlug, getProducts } from "@/lib/catalog.server";
@@ -120,13 +120,14 @@ export default async function ProductPage({
   };
 
   return (
-    // extra bottom padding on mobile clears the sticky add bar + tab bar
-    <div className="mx-auto max-w-[1160px] px-4 pb-44 pt-6 sm:px-[22px] lg:pb-16 lg:pt-8">
+    <div className="mx-auto max-w-[1160px] px-4 pb-10 pt-6 sm:px-[22px] lg:pb-16 lg:pt-8">
       <JsonLd data={productJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
+      {/* Breadcrumb — desktop only. On mobile it was one more thing sitting
+          above the fold before the product itself. */}
       <Link
         href={product.category ? `/category/${product.category.slug}` : "/products"}
-        className="inline-flex items-center gap-1.5 text-[14px] font-bold text-accent-700 hover:underline"
+        className="hidden items-center gap-1.5 text-[14px] font-bold text-accent-700 hover:underline lg:inline-flex"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="size-4">
           <path d="M19 12H5M11 6l-6 6 6 6" />
@@ -134,61 +135,25 @@ export default async function ProductPage({
         {product.category ? `Back to ${product.category.name}` : "Back to shop"}
       </Link>
 
-      <div className="mt-4 grid gap-8 lg:grid-cols-[440px_1fr] lg:gap-12">
+      <div className="grid gap-8 lg:mt-4 lg:grid-cols-[440px_1fr] lg:gap-12">
         {/* Gallery */}
         <div className="lg:sticky lg:top-[90px] lg:self-start">
-          <div className="overflow-hidden rounded-lg bg-surface">
-            <CatalogImage
-              path={primaryImage?.image_path ?? null}
-              alt={primaryImage?.alt_text || product.name}
-              name={product.name}
-              className="washed aspect-square w-full object-cover"
-            />
-          </div>
-          {product.images.length > 1 && (
-            <div className="mt-3 flex gap-3">
-              {product.images.map((img) => (
-                <div
-                  key={img.id}
-                  className="w-20 overflow-hidden rounded-md bg-surface"
-                >
-                  <CatalogImage
-                    path={img.image_path}
-                    alt={img.alt_text || product.name}
-                    name={product.name}
-                    className="washed aspect-square w-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <ProductGallery images={product.images} productName={product.name} />
         </div>
 
         {/* Details */}
         <div>
-          <div className="flex flex-wrap gap-2">
-            <span className="rounded-full bg-sage-100 px-3 py-1 text-[12px] font-bold text-sage-800">
-              Pure Veg
-            </span>
-            <span className="rounded-full bg-accent-100 px-3 py-1 text-[12px] font-bold text-accent-800">
-              No preservatives
-            </span>
-          </div>
-          <h1 className="mt-3 font-heading text-[32px] leading-tight">
+          <h1 className="mt-3 font-heading text-[22px] leading-tight lg:mt-0 lg:text-[32px]">
             {product.name}
           </h1>
           {product.native_name && (
-            <p className="telugu mt-1 text-[16px] text-accent-700">
+            <p className="telugu mt-1 text-[13px] text-accent-700 lg:text-[16px]">
               {product.native_name}
             </p>
           )}
-          {product.description && (
-            <p className="mt-3 text-[15px] text-neutral-700">
-              {product.description}
-            </p>
-          )}
 
-          <div className="mt-6">
+          {/* Pack size + price/add-to-cart row, right under the title. */}
+          <div className="mt-4">
             <BuyBox
               productId={product.id}
               productSlug={product.slug}
@@ -198,6 +163,12 @@ export default async function ProductPage({
             />
           </div>
 
+          {product.description && (
+            <p className="mt-5 text-[15px] text-neutral-700">
+              {product.description}
+            </p>
+          )}
+
           {/* Good to know */}
           <div className="mt-6 rounded-lg bg-neutral-100 p-4">
             <p className="text-[13px] font-bold">Good to know</p>
@@ -206,20 +177,6 @@ export default async function ProductPage({
               best enjoyed within 3–4 weeks. Ships across India in 2–5 days.
             </p>
           </div>
-
-          {product.keywords.length > 0 && (
-            <div className="mt-5 flex flex-wrap gap-2">
-              {product.keywords.map((k) => (
-                <Link
-                  key={k}
-                  href={`/products?q=${encodeURIComponent(k)}`}
-                  className="rounded-full border border-neutral-300 px-3 py-1 text-xs text-neutral-600 transition-colors hover:border-accent hover:text-accent-700"
-                >
-                  {k}
-                </Link>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
