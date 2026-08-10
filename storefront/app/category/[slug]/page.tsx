@@ -94,7 +94,7 @@ export default async function CategoryPage({
       )}
 
       {/* Category chips for quick hopping between shelves */}
-      <div className="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
+      <div className="no-scrollbar fade-edges-x -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
         <Link
           href="/products"
           className="shrink-0 rounded-full border border-neutral-300 bg-neutral-100 px-4 py-2 text-[13.5px] font-bold text-neutral-700 transition-colors hover:border-accent hover:text-accent-700"

@@ -39,7 +39,12 @@ export default function SearchBar({
   // Stale-while-revalidate: keep showing the previous results while typing.
   const results = live ? fetched.results : [];
   const searching = live && fetched.term !== term;
-  const placeholder = `Murukulu, avakaya, ${POPULAR[tick % POPULAR.length]}…`;
+  // Three terms from POPULAR, rotating a full step each tick — was
+  // hardcoded to "Murukulu, avakaya, ..." which collided with POPULAR[0]
+  // ("avakaya") every 5th tick and showed "avakaya, avakaya".
+  const placeholder = [0, 1, 2]
+    .map((i) => POPULAR[(tick + i) % POPULAR.length])
+    .join(", ") + "…";
 
   // Rotate the placeholder while the field sits empty.
   useEffect(() => {

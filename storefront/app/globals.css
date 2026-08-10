@@ -137,6 +137,18 @@
   }
 }
 
+/* Soft fade at both edges of a horizontally-scrollable rail, hinting there's
+   more off-screen — chip rows had a hard clip with no affordance. */
+@utility fade-edges-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 24px,
+    black calc(100% - 24px),
+    transparent
+  );
+}
+
 @layer components {
   /* tiny uppercase editorial label */
   .label {

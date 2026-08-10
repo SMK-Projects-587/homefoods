@@ -1,5 +1,15 @@
+import { timingSafeEqual } from "node:crypto";
 import { revalidateTag } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
+
+// Plain `!==` leaks how many leading bytes of the secret matched via
+// response timing. Not a practical attack over the network, but the fix is
+// free — compare as equal-length byte buffers instead.
+function secretsMatch(provided: string, expected: string): boolean {
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 // Maps a mutated DB table to the storefront cache tag it should invalidate.
 // Everything that feeds a product card (variants, images) lives under
@@ -32,7 +42,7 @@ export async function POST(req: NextRequest) {
     req.headers.get("x-revalidate-secret") ??
     new URL(req.url).searchParams.get("secret");
   const expected = process.env.REVALIDATE_SECRET;
-  if (!expected || provided !== expected) {
+  if (!expected || !provided || !secretsMatch(provided, expected)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 

@@ -85,6 +85,16 @@ function toCard(row: CardRow): ProductCardData {
   };
 }
 
+// Deliberately not `"use cache"` — every real request should log, not just
+// the first one that populates a cache entry. Fire-and-forget: a logging
+// failure must never break the search results page.
+export function logSearch(term: string, resultCount: number): void {
+  void supabase.rpc("log_search", { p_term: term, p_result_count: resultCount })
+    .then(({ error }) => {
+      if (error) console.error("log_search failed:", error.message);
+    });
+}
+
 export async function getCategories(): Promise<Category[]> {
   "use cache";
   cacheLife("hours");

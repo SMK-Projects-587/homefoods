@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import ProductCard from "@/components/product-card";
 import { searchProducts } from "@/lib/catalog";
-import { getCategories, getProducts } from "@/lib/catalog.server";
+import { getCategories, getProducts, logSearch } from "@/lib/catalog.server";
 
 // Dynamic by virtue of reading searchParams (wrapped in <Suspense>); under
 // Cache Components no route directive is needed or allowed.
@@ -50,6 +50,11 @@ export default async function ProductsPage({
 
   const activeCategory = categories.find((c) => c.slug === category) ?? null;
 
+  // Landing here with a committed query is the "search" event log_search
+  // tracks — not every keystroke (those hit search_products directly from
+  // search-bar.tsx without logging).
+  if (term) logSearch(term, products.length);
+
   const chip = (active: boolean) =>
     `shrink-0 rounded-full border px-4 py-2 text-[13.5px] font-bold transition-colors ${
       active
@@ -90,7 +95,7 @@ export default async function ProductsPage({
         </p>
       )}
 
-      <div className="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
+      <div className="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 py-1 sm:mx-0 sm:px-0">
         <Link href={withParams()} className={chip(!category)}>
           All
         </Link>

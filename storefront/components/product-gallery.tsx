@@ -2,14 +2,14 @@
 
 import { useRef, useState } from "react";
 import CatalogImage from "./catalog-image";
+import GalleryLightbox from "./gallery-lightbox";
 import type { ImageRow } from "@/lib/catalog";
 
-// Mobile: a swipeable, snap-scrolling carousel with dot indicators — no
-// thumbnail strip, which just ate vertical space above the fold on a phone.
-// Desktop: the original static main image + clickable thumbnails (dead UI
-// before this — the thumbnails never actually changed the main image).
-// Both markups render at once, toggled by CSS breakpoint, matching how
-// buy-box.tsx already handles its own mobile/desktop split in this codebase.
+// One swipeable, snap-scrolling carousel at every breakpoint. Mobile gets
+// dot indicators below it (thumbnails would eat vertical space above the
+// fold on a phone); desktop gets a clickable thumbnail strip instead, kept
+// in sync with the carousel in both directions — scrolling the carousel
+// updates the active thumbnail, clicking a thumbnail scrolls the carousel.
 export default function ProductGallery({
   images,
   productName,
@@ -18,6 +18,7 @@ export default function ProductGallery({
   productName: string;
 }) {
   const [active, setActive] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   if (images.length === 0) {
@@ -39,31 +40,45 @@ export default function ProductGallery({
     setActive(Math.round(el.scrollLeft / el.clientWidth));
   };
 
+  const scrollToIndex = (i: number) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+    setActive(i);
+  };
+
   return (
     <div>
-      {/* Mobile carousel */}
-      <div className="lg:hidden">
-        <div
-          ref={scrollerRef}
-          onScroll={onScroll}
-          className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-lg [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {images.map((img) => (
-            <div key={img.id} className="w-full shrink-0 snap-center bg-surface">
-              {/* Capped to well under half the viewport height — full-width
-                  aspect-square photos were dominating the whole first
-                  screen on a phone before a shopper saw anything else. */}
-              <CatalogImage
-                path={img.image_path}
-                alt={img.alt_text || productName}
-                name={productName}
-                className="washed h-[46vh] w-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
-        {images.length > 1 && (
-          <div className="mt-2.5 flex justify-center gap-1.5">
+      <div
+        ref={scrollerRef}
+        onScroll={onScroll}
+        className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-lg [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {images.map((img, i) => (
+          <button
+            key={img.id}
+            type="button"
+            onClick={() => setLightboxIndex(i)}
+            aria-label={`View full image ${i + 1}`}
+            className="w-full shrink-0 snap-center bg-surface"
+          >
+            {/* Capped to well under half the viewport height on mobile —
+                full-width aspect-square photos were dominating the whole
+                first screen on a phone before a shopper saw anything else. */}
+            <CatalogImage
+              path={img.image_path}
+              alt={img.alt_text || productName}
+              name={productName}
+              className="washed h-[46vh] w-full object-cover lg:aspect-square lg:h-auto lg:cursor-zoom-in"
+            />
+          </button>
+        ))}
+      </div>
+
+      {images.length > 1 && (
+        <>
+          {/* Mobile: dot indicators */}
+          <div className="mt-2.5 flex justify-center gap-1.5 lg:hidden">
             {images.map((img, i) => (
               <span
                 key={img.id}
@@ -74,26 +89,14 @@ export default function ProductGallery({
               />
             ))}
           </div>
-        )}
-      </div>
 
-      {/* Desktop: static image + clickable thumbnails */}
-      <div className="hidden lg:block">
-        <div className="overflow-hidden rounded-lg bg-surface">
-          <CatalogImage
-            path={images[active].image_path}
-            alt={images[active].alt_text || productName}
-            name={productName}
-            className="washed aspect-square w-full object-cover"
-          />
-        </div>
-        {images.length > 1 && (
-          <div className="mt-3 flex gap-3">
+          {/* Desktop: thumbnail strip */}
+          <div className="mt-3 hidden gap-3 lg:flex">
             {images.map((img, i) => (
               <button
                 key={img.id}
                 type="button"
-                onClick={() => setActive(i)}
+                onClick={() => scrollToIndex(i)}
                 aria-label={`Show image ${i + 1}`}
                 className={`w-20 shrink-0 overflow-hidden rounded-md bg-surface transition-opacity ${
                   i === active ? "" : "opacity-60 hover:opacity-100"
@@ -108,8 +111,17 @@ export default function ProductGallery({
               </button>
             ))}
           </div>
-        )}
-      </div>
+        </>
+      )}
+
+      {lightboxIndex !== null && (
+        <GalleryLightbox
+          images={images}
+          initialIndex={lightboxIndex}
+          productName={productName}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
     </div>
   );
 }

@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  storefront:
+    name: Storefront lint + typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: storefront
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: storefront/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      # No `next build` here: it needs a live Supabase URL/anon key (pages
+      # fetch the catalog at build time) plus every required NEXT_PUBLIC_*
+      # var (see lib/whatsapp.ts) — neither is available to CI yet. Lint +
+      # typecheck catch most regressions; wire up build/e2e once there's a
+      # CI-reachable Supabase project (or mocked data) to build against.
+
+  edge-functions:
+    name: Edge functions typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check supabase/functions/*/index.ts

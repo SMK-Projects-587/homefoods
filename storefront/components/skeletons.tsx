@@ -44,7 +44,7 @@ export function ProductGridSkeleton({
 // The horizontally-scrolling category chip row on the shop / category pages.
 export function ChipsSkeleton({ count = 5 }: { count?: number }) {
   return (
-    <div className="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-hidden px-4 sm:mx-0 sm:px-0">
+    <div className="no-scrollbar fade-edges-x -mx-4 mt-5 flex gap-2 overflow-hidden px-4 sm:mx-0 sm:px-0">
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}

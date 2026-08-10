@@ -1,10 +1,19 @@
 import type { CartItem } from "./cart";
 
-// Placeholder number — replace via NEXT_PUBLIC_WHATSAPP_NUMBER (country code +
-// number, digits only, e.g. 919876543210). Orders are placed over WhatsApp:
-// no payment gateway, delivery + payment are confirmed in the chat.
-export const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919876543210";
+// Set via NEXT_PUBLIC_WHATSAPP_NUMBER (country code + number, digits only,
+// e.g. 919876543210). Orders are placed over WhatsApp: no payment gateway,
+// delivery + payment are confirmed in the chat — so this number *is* the
+// store's order intake. A silent fallback here previously meant a missing
+// env var would send every order to a made-up number with no error anywhere;
+// fail loudly (and at build time, since this is inlined into the client
+// bundle) instead.
+if (!process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) {
+  throw new Error(
+    "NEXT_PUBLIC_WHATSAPP_NUMBER is not set — checkout has nowhere to send orders.",
+  );
+}
+
+export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
 
 // Trim a price to the shortest exact form: 129.00 → "129", 49.5 → "49.5".
 function num(n: number): string {

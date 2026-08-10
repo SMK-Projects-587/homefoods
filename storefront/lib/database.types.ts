@@ -153,6 +153,21 @@ export type Database = {
           },
         ]
       }
+      keep_alive: {
+        Row: {
+          id: number
+          pinged_at: string
+        }
+        Insert: {
+          id?: number
+          pinged_at?: string
+        }
+        Update: {
+          id?: number
+          pinged_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           attributes: Json
