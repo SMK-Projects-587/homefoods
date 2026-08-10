@@ -126,10 +126,14 @@ export default async function RootLayout({
             {/* Header/BottomNav read usePathname() for active-nav state, which
                 is request data — under Cache Components they can't be in the
                 prerendered static shell of dynamic routes, so they stream in
-                behind a same-size placeholder (no layout shift). */}
+                behind a same-size placeholder (no layout shift). Positioning
+                (fixed below lg, sticky at lg+) must match the real Header
+                exactly — it's fixed on mobile precisely so it reserves no
+                flow height, and a sticky fallback here would reserve it
+                anyway, then jump when the real header swaps in. */}
             <Suspense
               fallback={
-                <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
+                <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md lg:sticky">
                   <div className="mx-auto flex max-w-[1160px] items-center gap-4 px-4 py-3 sm:px-[22px]">
                     <div className="size-[38px]" />
                   </div>
