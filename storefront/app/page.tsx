@@ -158,7 +158,7 @@ export default async function HomePage() {
           {categories.map((c) => (
             <Link
               key={c.id}
-              href={`/products?category=${c.slug}`}
+              href={`/category/${c.slug}`}
               className="flex items-center gap-3 rounded-lg bg-neutral-100 p-4 transition-colors hover:bg-accent-100 active:bg-accent-200"
             >
               <span className="size-[54px] shrink-0 overflow-hidden rounded-full bg-surface">
