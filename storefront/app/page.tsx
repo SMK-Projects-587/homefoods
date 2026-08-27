@@ -151,7 +151,9 @@ export default async function HomePage() {
         />
       </section>
 
-      {/* Shop by category */}
+      {/* Shop by category — full-photo tiles (same source image as the
+          category page's own hero banner) instead of a small circle avatar,
+          so the shelf actually looks like what's on it. */}
       <section className="py-8">
         <h2 className="font-heading text-[26px]">Shop by category</h2>
         <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -159,26 +161,25 @@ export default async function HomePage() {
             <Link
               key={c.id}
               href={`/category/${c.slug}`}
-              className="flex items-center gap-3 rounded-lg bg-neutral-100 p-4 transition-colors hover:bg-accent-100 active:bg-accent-200"
+              className="group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-surface"
             >
-              <span className="size-[54px] shrink-0 overflow-hidden rounded-full bg-surface">
-                <CatalogImage
-                  path={c.image_path || null}
-                  alt={c.name}
-                  name={c.name}
-                  className="washed size-full object-cover"
-                />
-              </span>
-              <span className="min-w-0">
-                <span className="block truncate text-[15px] font-bold">
+              <CatalogImage
+                path={c.image_path || null}
+                alt={c.name}
+                name={c.name}
+                className="washed size-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
+              <span className="absolute inset-x-0 bottom-0 p-3">
+                <span className="block truncate font-heading text-[17px] text-bg">
                   {c.name}
                 </span>
                 {c.native_name && (
-                  <span className="telugu block truncate text-[12.5px] text-accent-700">
+                  <span className="telugu block truncate text-[12px] text-accent-200">
                     {c.native_name}
                   </span>
                 )}
-                <span className="block text-[12px] text-neutral-600">
+                <span className="block text-[11.5px] text-bg/75">
                   {countFor(c.slug)} items
                 </span>
               </span>
