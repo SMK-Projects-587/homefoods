@@ -43,12 +43,11 @@ function toCard(row: CardRow): ProductCardData {
     variants.find((v) => v.is_default) ??
     [...variants].sort((a, b) => a.price - b.price)[0] ??
     null;
-  const image =
-    [...(row.images ?? [])].sort(
-      (a, b) =>
-        Number(b.is_primary) - Number(a.is_primary) ||
-        a.sort_order - b.sort_order,
-    )[0] ?? null;
+  const sortedImages = [...(row.images ?? [])].sort(
+    (a, b) =>
+      Number(b.is_primary) - Number(a.is_primary) || a.sort_order - b.sort_order,
+  );
+  const image = sortedImages[0] ?? null;
   return {
     id: row.id,
     slug: row.slug,
@@ -58,6 +57,7 @@ function toCard(row: CardRow): ProductCardData {
     compareAtPrice: def?.compare_at_price ?? null,
     inStock: variants.some((v) => v.in_stock),
     imagePath: image?.image_path ?? null,
+    imagePaths: sortedImages.slice(0, 4).map((img) => img.image_path),
     categoryName: row.category?.name ?? null,
     categorySlug: row.category?.slug ?? null,
     variantCount: variants.length,

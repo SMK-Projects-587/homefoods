@@ -11,17 +11,20 @@
 @theme {
   /* ── Organic design system — Andhra HomeFoods ──────────────────────────
      Ported from the design handoff's Organic token set. Terracotta + sage on
-     a warm cream ground, with tonal ramps generated on one OKLCH lightness
-     scale so the same step of any role matches in visual value. */
-  --color-bg: #f5ead8;
-  --color-surface: #ebddc5;
+     a near-white ground, with tonal ramps generated on one OKLCH lightness
+     scale so the same step of any role matches in visual value.
+     bg is off-white (not pure #fff) so it still sits warm next to the
+     terracotta/sage accents; surface is the one step down used for image
+     tiles/placeholders and anywhere that needs to read as a distinct layer. */
+  --color-bg: #fdfcfa;
+  --color-surface: #f3ede2;
   --color-ink: #201e1d;
 
   --color-accent: #c67139; /* terracotta */
   --color-sage: #7a8a5e; /* accent-2 */
   --color-line: color-mix(in srgb, #201e1d 16%, transparent);
 
-  --color-neutral-100: #f9f4ed;
+  --color-neutral-100: #f3ede2;
   --color-neutral-200: #eee7db;
   --color-neutral-300: #dcd3c4;
   --color-neutral-400: #c0b6a5;

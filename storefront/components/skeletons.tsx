@@ -11,13 +11,13 @@ export function Block({ className = "" }: { className?: string }) {
 // a price / add-button row pinned to the bottom.
 export function ProductCardSkeleton() {
   return (
-    <div className="flex flex-col rounded-lg bg-neutral-100 p-2.5 shadow-sm">
-      <div className="aspect-square animate-pulse rounded-[14px] bg-neutral-200" />
-      <div className="px-1 pt-3">
+    <div className="flex flex-col">
+      <div className="aspect-square animate-pulse rounded-2xl bg-neutral-200" />
+      <div className="pt-2.5">
         <Block className="h-[15px] w-4/5" />
         <Block className="mt-1.5 h-[12px] w-2/5" />
       </div>
-      <div className="mt-auto flex items-center justify-between px-1 pt-3">
+      <div className="mt-auto flex items-center justify-between pt-1.5">
         <Block className="h-[14px] w-14" />
         <div className="size-[34px] animate-pulse rounded-full bg-neutral-200" />
       </div>

@@ -49,6 +49,10 @@ export type ProductCardData = {
   compareAtPrice: number | null;
   inStock: boolean;
   imagePath: string | null;
+  // Up to 4 image paths (primary first), for the mobile grid-card carousel.
+  // Search RPC cards only carry the primary image, so this may be a
+  // single-element array there.
+  imagePaths: string[];
   categoryName: string | null;
   categorySlug: string | null;
   variantCount: number | null;
@@ -100,6 +104,7 @@ export async function searchProducts(
     compareAtPrice: row.compare_at_price,
     inStock: row.in_stock,
     imagePath: row.primary_image_path || null,
+    imagePaths: row.primary_image_path ? [row.primary_image_path] : [],
     categoryName: null,
     categorySlug: row.category_slug_out || null,
     variantCount: null,

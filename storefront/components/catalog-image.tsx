@@ -79,11 +79,15 @@ export default function CatalogImage({
   alt,
   name,
   className,
+  priority,
 }: {
   path: string | null;
   alt: string;
   name: string;
   className?: string;
+  // Above-the-fold cards (first row of a grid) should load eagerly at high
+  // priority instead of lazily, or the LCP image itself gets deferred.
+  priority?: boolean;
 }) {
   const [errored, setErrored] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -104,7 +108,8 @@ export default function CatalogImage({
       ref={imgRef}
       src={productImageUrl(path)}
       alt={alt}
-      loading="lazy"
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : undefined}
       className={className}
       onError={() => setErrored(true)}
     />

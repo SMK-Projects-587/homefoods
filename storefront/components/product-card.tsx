@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import CatalogImage from "./catalog-image";
+import CardImageCarousel from "./card-image-carousel";
 import MarqueeText from "./marquee-text";
 import QtyStepper from "./qty-stepper";
 import VariantDrawer from "./variant-drawer";
@@ -12,7 +12,14 @@ import { addDelayMs } from "@/lib/timing";
 import { formatINR } from "@/lib/format";
 import type { ProductCardData } from "@/lib/catalog";
 
-export default function ProductCard({ product }: { product: ProductCardData }) {
+export default function ProductCard({
+  product,
+  priority,
+}: {
+  product: ProductCardData;
+  // Pass for the first row of a grid so its image loads eagerly (LCP).
+  priority?: boolean;
+}) {
   const { items, addItem, setQty } = useCart();
   const dv = product.defaultVariant;
   const soldOut = !product.inStock;
@@ -54,18 +61,19 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
   };
 
   return (
-    <div className="group relative flex flex-col rounded-lg bg-neutral-100 p-2.5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+    <div className="group relative flex flex-col">
       <Link
         href={`/products/${product.slug}`}
         className="block focus-visible:outline-none"
       >
-        <div className="relative aspect-square overflow-hidden rounded-[14px] bg-surface">
-          <CatalogImage
-            path={product.imagePath}
+        <div className="relative aspect-square overflow-hidden rounded-2xl bg-surface">
+          <CardImageCarousel
+            paths={product.imagePaths.length ? product.imagePaths : [product.imagePath ?? ""]}
             alt={product.name}
             name={product.name}
-            className="washed size-full object-cover transition-transform duration-500 group-hover:scale-105"
+            priority={priority}
           />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/25 via-transparent to-transparent" />
           {soldOut && (
             <span className="label absolute left-2 top-2 rounded-full bg-ink/85 px-2.5 py-1 text-[10px] text-bg">
               Sold out
@@ -77,19 +85,19 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
             </span>
           )}
         </div>
-        <div className="px-1 pt-3">
-          <h3 className="font-body text-[14.5px] font-bold leading-snug">
+        <div className="pt-2.5">
+          <h3 className="font-body text-[14px] font-bold leading-snug">
             <MarqueeText text={product.name} />
           </h3>
           {product.nativeName && (
-            <p className="telugu mt-0.5 text-[12.5px] text-accent-700">
+            <p className="telugu mt-0.5 text-[12px] text-accent-700">
               {product.nativeName}
             </p>
           )}
         </div>
       </Link>
 
-      <div className="mt-auto flex items-end justify-between gap-2 px-1 pt-2">
+      <div className="mt-auto flex items-end justify-between gap-2 pt-1.5">
         <span className="text-[13.5px] font-bold">
           {product.price != null ? (
             <>
