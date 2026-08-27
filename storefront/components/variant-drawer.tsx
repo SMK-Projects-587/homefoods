@@ -61,7 +61,6 @@ export default function VariantDrawer({
             imagePath: product.imagePath,
           },
           1,
-          { silent: true },
         );
         setAddingId(null);
       },

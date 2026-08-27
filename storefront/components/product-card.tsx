@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import CatalogImage from "./catalog-image";
+import MarqueeText from "./marquee-text";
 import QtyStepper from "./qty-stepper";
 import VariantDrawer from "./variant-drawer";
 import Spinner from "./spinner";
@@ -78,7 +79,7 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
         </div>
         <div className="px-1 pt-3">
           <h3 className="font-body text-[14.5px] font-bold leading-snug">
-            {product.name}
+            <MarqueeText text={product.name} />
           </h3>
           {product.nativeName && (
             <p className="telugu mt-0.5 text-[12.5px] text-accent-700">

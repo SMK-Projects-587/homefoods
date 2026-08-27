@@ -139,7 +139,7 @@ export default async function HomePage() {
           }
         />
         <TrustTile
-          bg="bg-neutral-200 text-neutral-800"
+          bg="bg-sage-200 text-sage-800"
           label="Ships all over India"
           icon={
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">
@@ -196,7 +196,7 @@ export default async function HomePage() {
           </Link>
         </div>
         {/* mobile: edge-bleed horizontal rail · desktop: 4-col grid */}
-        <div className="no-scrollbar fade-edges-x -mx-4 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 sm:-mx-[22px] sm:px-[22px] md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0 md:[mask-image:none]">
+        <div className="no-scrollbar fade-edges-x -mx-4 mt-4 scroll-pl-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 sm:-mx-[22px] sm:px-[22px] md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0 md:[mask-image:none]">
           {bestsellers.map((p) => (
             <div key={p.id} className="w-[168px] shrink-0 snap-start md:w-auto">
               <ProductCard product={p} />

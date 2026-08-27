@@ -8,7 +8,6 @@ import { SearchProvider } from "@/lib/search";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import BottomNav from "@/components/bottom-nav";
-import CartSidebar from "@/components/cart-sidebar";
 import SearchOverlay from "@/components/search-overlay";
 import JsonLd from "@/components/json-ld";
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, absoluteUrl } from "@/lib/site";
@@ -133,7 +132,7 @@ export default async function RootLayout({
                 anyway, then jump when the real header swaps in. */}
             <Suspense
               fallback={
-                <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md lg:sticky">
+                <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
                   <div className="mx-auto flex max-w-[1160px] items-center gap-4 px-4 py-3 sm:px-[22px]">
                     <div className="size-[38px]" />
                   </div>
@@ -142,13 +141,12 @@ export default async function RootLayout({
             >
               <Header />
             </Suspense>
-            {/* pb clears the fixed mobile tab bar (hidden ≥ lg) */}
-            <main className="min-h-[70vh] pb-24 lg:pb-0">{children}</main>
+            {/* pt clears the fixed header */}
+            <main className="min-h-[70vh] pt-[68px]">{children}</main>
             <Footer categories={categories} />
             <Suspense fallback={null}>
               <BottomNav />
             </Suspense>
-            <CartSidebar />
             <SearchOverlay />
           </SearchProvider>
         </CartProvider>

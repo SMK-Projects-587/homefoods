@@ -1,16 +1,14 @@
 "use client";
 
-import { useCart } from "@/lib/cart";
+import Link from "next/link";
 import CartCountBadge from "./cart-count-badge";
 
 export default function CartButton() {
-  const { openCart } = useCart();
   return (
-    <button
-      type="button"
-      onClick={openCart}
-      className="relative grid size-11 shrink-0 cursor-pointer place-items-center rounded-full bg-accent-100 text-accent-800 transition-colors hover:bg-accent-200"
-      aria-label="Open basket"
+    <Link
+      href="/cart"
+      className="relative grid size-11 shrink-0 place-items-center rounded-full bg-accent-100 text-accent-800 transition-colors hover:bg-accent-200"
+      aria-label="View basket"
     >
       <svg
         viewBox="0 0 24 24"
@@ -26,6 +24,6 @@ export default function CartButton() {
         <path d="M2.5 3h2l2.2 12.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.3L21 7H6" />
       </svg>
       <CartCountBadge className="absolute -right-1 -top-1 grid min-w-5 place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-bg" />
-    </button>
+    </Link>
   );
 }

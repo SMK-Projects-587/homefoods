@@ -18,7 +18,7 @@ export default function CartPage() {
   };
 
   return (
-    <div className="mx-auto max-w-[720px] px-4 py-8 sm:px-[22px] sm:py-10">
+    <div className="mx-auto max-w-[1160px] px-4 py-8 sm:px-[22px] sm:py-10">
       <h1 className="font-heading text-[30px]">Your basket</h1>
 
       {!hydrated ? null : items.length === 0 ? (
@@ -42,7 +42,7 @@ export default function CartPage() {
           </Link>
         </div>
       ) : (
-        <div className="mt-6 space-y-6">
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px] lg:items-start">
           <ul className="space-y-3">
             {items.map((item) => (
               <li
@@ -92,9 +92,16 @@ export default function CartPage() {
                 </div>
               </li>
             ))}
+
+            <Link
+              href="/products"
+              className="inline-block text-[14px] font-bold text-accent-700 hover:underline"
+            >
+              ← Keep shopping
+            </Link>
           </ul>
 
-          <div className="rounded-lg bg-neutral-100 p-[18px] shadow-sm">
+          <div className="rounded-lg bg-neutral-100 p-[18px] shadow-sm lg:sticky lg:top-[92px]">
             <div className="flex justify-between text-[14px]">
               <span className="text-neutral-600">Items ({count})</span>
               <span className="font-semibold">{formatINR(subtotal)}</span>
@@ -123,13 +130,6 @@ export default function CartPage() {
               confirmed there.
             </p>
           </div>
-
-          <Link
-            href="/products"
-            className="inline-block text-[14px] font-bold text-accent-700 hover:underline"
-          >
-            ← Keep shopping
-          </Link>
         </div>
       )}
     </div>

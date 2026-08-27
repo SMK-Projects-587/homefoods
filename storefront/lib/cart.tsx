@@ -25,16 +25,9 @@ export type CartItem = {
 type CartContextValue = {
   items: CartItem[];
   hydrated: boolean;
-  isOpen: boolean;
   count: number;
   subtotal: number;
-  openCart: () => void;
-  closeCart: () => void;
-  addItem: (
-    item: Omit<CartItem, "qty">,
-    qty?: number,
-    opts?: { silent?: boolean },
-  ) => void;
+  addItem: (item: Omit<CartItem, "qty">, qty?: number) => void;
   removeItem: (variantId: number) => void;
   setQty: (variantId: number, qty: number) => void;
   clear: () => void;
@@ -48,7 +41,6 @@ const STORAGE_KEY = "homefoods:cart:v2";
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -71,15 +63,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items, hydrated]);
 
-  const openCart = useCallback(() => setIsOpen(true), []);
-  const closeCart = useCallback(() => setIsOpen(false), []);
-
   const addItem = useCallback(
-    (
-      item: Omit<CartItem, "qty">,
-      qty = 1,
-      opts?: { silent?: boolean },
-    ) => {
+    (item: Omit<CartItem, "qty">, qty = 1) => {
       setItems((prev) => {
         const existing = prev.find((i) => i.variantId === item.variantId);
         if (existing) {
@@ -89,10 +74,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
         return [...prev, { ...item, qty }];
       });
-      // The variant drawer adds silently — popping the cart sidebar open
-      // behind/over an open drawer while the user is still picking sizes
-      // looks broken, especially where both are bottom sheets on mobile.
-      if (!opts?.silent) setIsOpen(true);
     },
     [],
   );
@@ -123,11 +104,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     () => ({
       items,
       hydrated,
-      isOpen,
       count,
       subtotal,
-      openCart,
-      closeCart,
       addItem,
       removeItem,
       setQty,
@@ -136,11 +114,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [
       items,
       hydrated,
-      isOpen,
       count,
       subtotal,
-      openCart,
-      closeCart,
       addItem,
       removeItem,
       setQty,

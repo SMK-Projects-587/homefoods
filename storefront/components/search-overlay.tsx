@@ -28,20 +28,25 @@ export default function SearchOverlay() {
       aria-label="Search products"
     >
       <div
-        className="absolute inset-0 bg-neutral-900/45"
+        className="absolute inset-0 bg-gradient-to-b from-ink/80 via-ink/70 to-accent-900/70 backdrop-blur-sm"
         onClick={close}
         aria-hidden
       />
-      <div className="absolute inset-x-0 top-0 px-4 pt-[14vh]">
-        <div className="mx-auto w-full max-w-xl">
-          <div className="mb-3 flex items-center justify-between">
-            <p className="label text-neutral-100">Search the kitchen</p>
+      <div className="absolute inset-x-0 top-0 flex justify-center px-4 pt-[10vh] sm:pt-[14vh]">
+        <div className="w-full max-w-xl animate-rise rounded-[24px] bg-bg p-4 shadow-lg sm:p-6">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="font-heading text-[20px] sm:text-[22px]">
+              Search the kitchen
+            </p>
             <button
               type="button"
               onClick={close}
-              className="label cursor-pointer rounded-full bg-neutral-100/90 px-3 py-1.5 text-ink transition-colors hover:bg-neutral-100"
+              aria-label="Close search"
+              className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full bg-neutral-200 text-neutral-700 transition-colors hover:bg-accent-100 hover:text-accent-700"
             >
-              Esc
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" className="size-4">
+                <path d="M6 6l12 12M18 6 6 18" />
+              </svg>
             </button>
           </div>
           <SearchBar autoFocus onNavigate={close} />

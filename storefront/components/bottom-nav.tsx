@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCart } from "@/lib/cart";
 import { useSearch } from "@/lib/search";
-import CartCountBadge from "./cart-count-badge";
 
-function Icon({ name }: { name: "home" | "shop" | "search" | "cart" }) {
+function Icon({ name }: { name: "home" | "shop" | "search" }) {
   const common = {
     viewBox: "0 0 24 24",
     fill: "none",
@@ -30,18 +28,10 @@ function Icon({ name }: { name: "home" | "shop" | "search" | "cart" }) {
         <path d="M9 8a3 3 0 0 1 6 0" />
       </svg>
     );
-  if (name === "search")
-    return (
-      <svg {...common}>
-        <circle cx="11" cy="11" r="7" />
-        <path d="m20 20-3.5-3.5" />
-      </svg>
-    );
   return (
     <svg {...common}>
-      <circle cx="9" cy="20" r="1.4" />
-      <circle cx="18" cy="20" r="1.4" />
-      <path d="M2.5 3h2l2.2 12.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.3L21 7H6" />
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
     </svg>
   );
 }
@@ -49,7 +39,6 @@ function Icon({ name }: { name: "home" | "shop" | "search" | "cart" }) {
 export default function BottomNav() {
   const pathname = usePathname();
   const { open } = useSearch();
-  const { openCart } = useCart();
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -80,17 +69,6 @@ export default function BottomNav() {
         <button type="button" onClick={open} className={cls(false)}>
           <Icon name="search" />
           Search
-        </button>
-        <button
-          type="button"
-          onClick={openCart}
-          className={`${cls(isActive("/cart"))} relative`}
-        >
-          <span className="relative">
-            <Icon name="cart" />
-            <CartCountBadge className="absolute -right-2 -top-1.5 grid min-w-4 place-items-center rounded-full bg-accent px-1 text-[9px] font-bold text-bg" />
-          </span>
-          Cart
         </button>
       </div>
     </nav>
