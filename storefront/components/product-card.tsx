@@ -97,7 +97,7 @@ export default function ProductCard({
         </div>
       </Link>
 
-      <div className="mt-auto flex items-end justify-between gap-2 pt-1.5">
+      <div className="mt-auto flex items-center justify-between gap-2">
         <span className="text-[13.5px] font-bold">
           {product.price != null ? (
             <>

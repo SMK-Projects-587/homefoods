@@ -80,7 +80,7 @@ export default async function HomePage() {
             style={{ animationDelay: "230ms" }}
           >
             <Link
-              href="/products"
+              href="#bestsellers"
               className="rounded-full bg-accent px-6 py-3.5 text-[15px] font-bold text-bg transition-colors hover:bg-accent-600 active:bg-accent-700"
             >
               Shop bestsellers
@@ -189,7 +189,7 @@ export default async function HomePage() {
       </section>
 
       {/* Bestsellers */}
-      <section className="py-8">
+      <section className="py-8 scroll-mt-20" id="bestsellers">
         <div className="flex items-baseline justify-between">
           <h2 className="font-heading text-[26px]">Bestsellers</h2>
           <Link href="/products" className="text-[14px] font-bold text-accent-700 hover:underline">

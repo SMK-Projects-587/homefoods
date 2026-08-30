@@ -119,7 +119,7 @@ export default async function CategoryPage({
       {/* Other shelves — a lighter-weight hop than the hero, not styled to
           compete with it. */}
       {others.length > 0 && (
-        <div className="no-scrollbar fade-edges-x -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
+        <div className="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
           {others.map((c) => (
             <Link
               key={c.id}

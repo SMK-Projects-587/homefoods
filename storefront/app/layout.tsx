@@ -119,7 +119,7 @@ export default async function RootLayout({
       lang="en"
       className={`${caprasimo.variable} ${figtree.variable} ${notoTelugu.variable}`}
     >
-      <body className="font-body antialiased">
+      <body className="font-body antialiased scroll-smooth">
         <JsonLd data={orgJsonLd} />
         <JsonLd data={websiteJsonLd} />
         <CartProvider>
