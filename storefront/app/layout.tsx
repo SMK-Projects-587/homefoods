@@ -59,11 +59,13 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} — ${SITE_TAGLINE}`,
     description: SITE_DESCRIPTION,
     locale: "en_IN",
+    images: [absoluteUrl("/opengraph-image")],
   },
   twitter: {
     card: "summary_large_image",
     title: `${SITE_NAME} — ${SITE_TAGLINE}`,
     description: SITE_DESCRIPTION,
+    images: [absoluteUrl("/opengraph-image")],
   },
   robots: {
     index: true,
