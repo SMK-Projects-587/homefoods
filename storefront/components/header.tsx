@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import CartButton from "./cart-button";
@@ -11,25 +12,6 @@ const NAV = [
   { href: "/about", label: "Our story" },
 ];
 
-function LeafLogo() {
-  return (
-    <span className="grid size-[38px] shrink-0 place-items-center rounded-full bg-accent text-bg">
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.9"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="size-5"
-      >
-        <path d="M11 20A7 7 0 0 1 4 13C4 8 8 4 13 4c3 0 7 1 7 1s-1 4-1 7a7 7 0 0 1-8 8Z" />
-        <path d="M8 17c2-3 5-5 8-6" />
-      </svg>
-    </span>
-  );
-}
-
 export default function Header() {
   const pathname = usePathname();
   const { open } = useSearch();
@@ -40,7 +22,15 @@ export default function Header() {
     <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1160px] items-center gap-4 px-4 py-3 sm:px-[22px]">
         <Link href="/" className="flex min-w-0 items-center gap-2.5">
-          <LeafLogo />
+          <span className="relative size-[64px] shrink-0 overflow-hidden rounded-full">
+            <Image
+              src="/logo.svg"
+              alt="Andhra HomeFoods"
+              fill
+              className="scale-115 object-cover"
+              priority
+            />
+          </span>
           <span className="min-w-0 leading-tight">
             <span className="block truncate font-heading text-[19px]">
               Andhra HomeFoods

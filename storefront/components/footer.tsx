@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Category } from "@/lib/catalog";
 
@@ -11,15 +12,17 @@ export default function Footer({ categories }: { categories: Category[] }) {
     <footer className="mt-12 border-t border-line bg-surface pb-24 lg:pb-0">
       <div className="mx-auto grid max-w-[1160px] gap-8 px-4 py-12 sm:px-[22px] md:grid-cols-3">
         <div>
-          <div className="flex items-center gap-2.5">
-            <span className="grid size-[38px] shrink-0 place-items-center rounded-full bg-accent text-bg">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="size-5">
-                <path d="M11 20A7 7 0 0 1 4 13C4 8 8 4 13 4c3 0 7 1 7 1s-1 4-1 7a7 7 0 0 1-8 8Z" />
-                <path d="M8 17c2-3 5-5 8-6" />
-              </svg>
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="relative size-16 shrink-0 overflow-hidden">
+              <Image
+                src="/logo.svg"
+                alt="Andhra HomeFoods"
+                fill
+                className="scale-115 object-cover"
+              />
             </span>
             <span className="font-heading text-[19px]">Andhra HomeFoods</span>
-          </div>
+          </Link>
           <p className="mt-3 max-w-xs text-[14px] text-neutral-700">
             Traditional Brahmin home-style snacks, podis, pickles and sweets —
             hand-made in small batches since 1992.
