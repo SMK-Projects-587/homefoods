@@ -61,6 +61,7 @@ export default function GalleryLightbox({
           path={img.image_path}
           alt={img.alt_text || productName}
           name={productName}
+          preset="zoom"
           className="max-h-[85vh] max-w-full object-contain"
         />
       </div>

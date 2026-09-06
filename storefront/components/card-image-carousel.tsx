@@ -36,6 +36,7 @@ export default function CardImageCarousel({
         path={paths[0] ?? null}
         alt={alt}
         name={name}
+        preset="card"
         priority={priority}
         className="washed size-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
@@ -55,6 +56,7 @@ export default function CardImageCarousel({
               path={path}
               alt={alt}
               name={name}
+              preset="card"
               priority={priority && i === 0}
               className="washed size-full object-cover"
             />
@@ -66,6 +68,7 @@ export default function CardImageCarousel({
         path={paths[0]}
         alt={alt}
         name={name}
+        preset="card"
         priority={priority}
         className="washed hidden size-full object-cover transition-transform duration-500 group-hover:scale-105 lg:block"
       />

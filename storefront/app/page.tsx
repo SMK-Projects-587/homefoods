@@ -109,6 +109,7 @@ export default async function HomePage() {
                 path={p.imagePath}
                 alt={p.name}
                 name={p.name}
+                preset="card"
                 className="washed aspect-square w-full object-cover"
               />
             </Link>
@@ -167,6 +168,7 @@ export default async function HomePage() {
                 path={c.image_path || null}
                 alt={c.name}
                 name={c.name}
+                preset="card"
                 className="washed size-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />

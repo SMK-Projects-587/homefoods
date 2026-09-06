@@ -82,6 +82,7 @@ export default async function CategoryPage({
           path={category.image_path || null}
           alt={category.name}
           name={category.name}
+          preset="gallery"
           priority
           className="washed size-full object-cover"
         />

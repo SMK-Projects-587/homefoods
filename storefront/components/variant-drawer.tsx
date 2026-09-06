@@ -91,6 +91,7 @@ export default function VariantDrawer({
               path={product.imagePath}
               alt=""
               name={product.name}
+              preset="thumb"
               className="washed size-full object-cover"
             />
           </span>

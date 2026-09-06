@@ -28,6 +28,7 @@ export default function ProductGallery({
           path={null}
           alt={productName}
           name={productName}
+          preset="gallery"
           className="washed h-[46vh] w-full object-cover lg:aspect-square lg:h-auto"
         />
       </div>
@@ -69,6 +70,7 @@ export default function ProductGallery({
               path={img.image_path}
               alt={img.alt_text || productName}
               name={productName}
+              preset="gallery"
               className="washed h-[46vh] w-full object-cover lg:aspect-square lg:h-auto lg:cursor-zoom-in"
             />
           </button>
@@ -106,6 +108,7 @@ export default function ProductGallery({
                   path={img.image_path}
                   alt={img.alt_text || productName}
                   name={productName}
+                  preset="thumb"
                   className="washed aspect-square w-full object-cover"
                 />
               </button>

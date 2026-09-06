@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { productImageUrl } from "@/lib/supabase";
+import { productImageUrl, type ImagePreset } from "@/lib/supabase";
 
 // Warm, on-palette fallback tones — seeded per name so a product always gets
 // the same tile. Soft accent/sage/neutral washes, never a harsh block colour.
@@ -78,12 +78,17 @@ export default function CatalogImage({
   path,
   alt,
   name,
+  preset,
   className,
   priority,
 }: {
   path: string | null;
   alt: string;
   name: string;
+  // Which fixed Cloudflare Image Resizing bucket to request — required so
+  // every call site makes a deliberate size choice instead of pulling the
+  // full-resolution source (see IMAGE_PRESETS in lib/supabase.ts).
+  preset: ImagePreset;
   className?: string;
   // Above-the-fold cards (first row of a grid) should load eagerly at high
   // priority instead of lazily, or the LCP image itself gets deferred.
@@ -106,7 +111,7 @@ export default function CatalogImage({
     // eslint-disable-next-line @next/next/no-img-element
     <img
       ref={imgRef}
-      src={productImageUrl(path)}
+      src={productImageUrl(path, preset)}
       alt={alt}
       loading={priority ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : undefined}

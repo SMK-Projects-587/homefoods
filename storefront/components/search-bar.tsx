@@ -188,6 +188,7 @@ export default function SearchBar({
                           path={p.imagePath}
                           alt=""
                           name={p.name}
+                          preset="thumb"
                           className="washed size-full object-cover"
                         />
                       </span>

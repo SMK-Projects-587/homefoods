@@ -57,6 +57,7 @@ export default function CartPage() {
                     path={item.imagePath}
                     alt={item.productName}
                     name={item.productName}
+                    preset="thumb"
                     className="washed size-full object-cover"
                   />
                 </Link>
