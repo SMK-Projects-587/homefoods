@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Caprasimo, Figtree, Noto_Sans_Telugu } from "next/font/google";
+import { Caprasimo, Fraunces, Figtree, Noto_Sans_Telugu } from "next/font/google";
 import "./globals.css";
 import { getCategories } from "@/lib/catalog.server";
 import { CartProvider } from "@/lib/cart";
@@ -17,6 +17,12 @@ const caprasimo = Caprasimo({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-caprasimo",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-fraunces",
 });
 
 const figtree = Figtree({
@@ -117,7 +123,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${caprasimo.variable} ${figtree.variable} ${notoTelugu.variable}`}
+      className={`${fraunces.variable} ${figtree.variable} ${notoTelugu.variable}`}
     >
       <body className="font-body antialiased scroll-smooth">
         <JsonLd data={orgJsonLd} />

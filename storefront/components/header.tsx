@@ -20,7 +20,7 @@ export default function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1160px] items-center gap-4 px-4 py-3 sm:px-[22px]">
+      <div className="mx-auto flex max-w-[1160px] items-center gap-1 px-4 py-3 sm:px-[22px]">
         <Link href="/" className="flex min-w-0 items-center gap-2.5">
           <span className="relative size-[64px] shrink-0 overflow-hidden rounded-full">
             <Image
@@ -32,7 +32,7 @@ export default function Header() {
             />
           </span>
           <span className="min-w-0 leading-tight">
-            <span className="block truncate font-heading text-[19px]">
+            <span className="block truncate font-heading font-bold text-[19px]">
               Andhra HomeFoods
             </span>
             <span className="telugu block truncate text-[11px] text-accent-700">
@@ -59,9 +59,20 @@ export default function Header() {
           <button
             type="button"
             onClick={open}
-            className="rounded-full px-4 py-2.5 text-[14.5px] font-bold text-neutral-500 transition-colors hover:bg-accent-100 hover:text-accent-700"
+            title="Search"
+            className="rounded-full size-11 inline-flex justify-center items-center text-neutral-500 transition-colors hover:bg-accent-100 hover:text-accent-700"
           >
-            Search
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              className="size-5"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
           </button>
         </nav>
 
