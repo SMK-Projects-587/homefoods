@@ -3,6 +3,7 @@ import Link from "next/link";
 import CatalogImage from "@/components/catalog-image";
 import ProductCard from "@/components/product-card";
 import { getCategories, getProducts } from "@/lib/catalog.server";
+import { cdnImageUrl } from "@/lib/supabase";
 
 // Data is cached per-fetch via `use cache` + cacheTag in lib/catalog.server,
 // invalidated on catalog changes through /api/revalidate (Cache Components).
@@ -37,15 +38,41 @@ export default async function HomePage() {
     getProducts(),
   ]);
   const bestsellers = products.slice(0, 8);
-  const collage = products.slice(0, 4);
   const countFor = (slug: string) =>
     products.filter((p) => p.categorySlug === slug).length;
 
   return (
     <div className="mx-auto max-w-[1160px] px-4 sm:px-[22px]">
-      {/* Hero */}
-      <section className="grid items-center gap-8 pb-6 pt-8 md:grid-cols-[1.05fr_1fr] md:gap-12 md:pb-12 md:pt-14">
-        <div>
+      {/* Hero — real kitchen-counter photography, shot with a wall of
+          negative space on the left built in for exactly this: the copy
+          sits directly on the photo instead of beside it. Same crop-free
+          aspect-ratio trick as the about-us banner (mobile 2:3 portrait,
+          desktop 2:1 landscape) so nothing gets awkwardly cut off. */}
+      <section
+        className="relative -mx-4 min-h-dvh max-h-[640px] overflow-hidden rounded-none sm:-mx-[22px] md:mx-0 md:mt-8 md:min-h-0 md:max-h-none md:rounded-[28px]"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={cdnImageUrl("homepage-landing-mobile.png", { width: 860 })}
+          alt="A freshly opened jar of avakaya pickle, chilli and turmeric powders, and garlic on a sunlit kitchen counter"
+          loading="eager"
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover md:hidden"
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={cdnImageUrl("homepage-landing.webp", { width: 1600 })}
+          alt="A freshly opened jar of avakaya pickle, chilli and turmeric powders, and garlic on a sunlit kitchen counter"
+          loading="eager"
+          fetchPriority="high"
+          className="hidden w-full object-cover md:block"
+          style={{ aspectRatio: "2 / 1", maxHeight: "620px" }}
+        />
+        {/* Cream scrim, same tone as the wall in the photo, fading toward
+            the product side so the copy reads as part of the shot. */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-bg via-bg/75 to-transparent md:via-bg/55" />
+
+        <div className="absolute inset-0 flex flex-col justify-start px-4 pt-5 pb-6 sm:px-[22px] md:justify-center md:max-w-[54%] md:py-0 lg:max-w-[48%]">
           <div className="flex animate-rise flex-wrap gap-2">
             <span className="rounded-full bg-sage-100 px-3 py-1 text-[12px] font-bold text-sage-800">
               100% Pure Veg
@@ -55,7 +82,7 @@ export default async function HomePage() {
             </span>
           </div>
           <h1
-            className="mt-4 animate-rise font-heading text-[40px] leading-[1.06] sm:text-[54px]"
+            className="mt-4 animate-rise font-heading text-[38px] leading-[1.06] sm:text-[46px] md:text-[52px]"
             style={{ animationDelay: "70ms" }}
           >
             Amma&rsquo;s kitchen,
@@ -87,33 +114,11 @@ export default async function HomePage() {
             </Link>
             <Link
               href="/about"
-              className="rounded-full border border-line px-6 py-3.5 text-[15px] font-bold text-accent-700 transition-colors hover:bg-accent-100"
+              className="rounded-full border border-line bg-bg/70 px-6 py-3.5 text-[15px] font-bold text-accent-700 backdrop-blur-sm transition-colors hover:bg-accent-100"
             >
               Our story
             </Link>
           </div>
-        </div>
-
-        {/* Hero collage — real product tiles, washed, so it feels alive even
-            before photography lands. */}
-        <div className="grid animate-rise grid-cols-2 gap-3 md:gap-4" style={{ animationDelay: "120ms" }}>
-          {collage.map((p, i) => (
-            <Link
-              key={p.id}
-              href={`/products/${p.slug}`}
-              className={`overflow-hidden rounded-lg bg-surface shadow-sm ${
-                i % 2 === 0 ? "md:mt-6" : ""
-              }`}
-            >
-              <CatalogImage
-                path={p.imagePath}
-                alt={p.name}
-                name={p.name}
-                preset="card"
-                className="washed aspect-square w-full object-cover"
-              />
-            </Link>
-          ))}
         </div>
       </section>
 
