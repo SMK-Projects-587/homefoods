@@ -32,6 +32,19 @@ const IMAGE_PRESETS = {
 
 export type ImagePreset = keyof typeof IMAGE_PRESETS;
 
+// Generic Cloudflare Image Resizing URL for one-off site assets (marketing
+// photos, etc.) that live at the R2 bucket root rather than under a catalog
+// image_path key — unlike productImageUrl, there's no Supabase Storage
+// fallback, since these assets only ever live in R2.
+export function cdnImageUrl(
+  key: string,
+  { width, quality = 75 }: { width: number; quality?: number },
+) {
+  const k = key.replace(/^\/+/, "");
+  if (!r2PublicBaseUrl) return `/${k}`;
+  return `${r2PublicBaseUrl}/cdn-cgi/image/width=${width},quality=${quality},format=auto/${k}`;
+}
+
 // image_path columns store object keys (e.g. "products/avakaya/main.jpg"),
 // never full URLs. In production the objects live in the public R2 bucket
 // above. When NEXT_PUBLIC_R2_PUBLIC_BASE_URL is unset (local dev) we fall back

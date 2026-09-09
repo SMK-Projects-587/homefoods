@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { cdnImageUrl } from "@/lib/supabase";
 
 export const metadata: Metadata = {
   title: "Our story",
@@ -44,14 +45,15 @@ export default function AboutPage() {
 
       <div
         className="mt-6 overflow-hidden rounded-lg bg-accent-100"
-        style={{ aspectRatio: "4 / 3" }}
+        style={{ aspectRatio: "2 / 1" }}
       >
-        <div className="washed grid size-full place-items-center bg-[radial-gradient(120%_120%_at_30%_20%,#ffe1d0_0%,#f6a06b_100%)] text-accent-800">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="size-16 opacity-70">
-            <path d="M11 20A7 7 0 0 1 4 13C4 8 8 4 13 4c3 0 7 1 7 1s-1 4-1 7a7 7 0 0 1-8 8Z" />
-            <path d="M8 17c2-3 5-5 8-6" />
-          </svg>
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={cdnImageUrl("about-us.webp", { width: 1200 })}
+          alt="The Andhra HomeFoods kitchen, where every batch is still made by hand"
+          loading="lazy"
+          className="washed size-full object-cover"
+        />
       </div>
 
       <div className="mt-6 space-y-4 text-[15px] text-neutral-700">
