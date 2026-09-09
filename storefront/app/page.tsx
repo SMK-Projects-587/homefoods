@@ -49,7 +49,7 @@ export default async function HomePage() {
           aspect-ratio trick as the about-us banner (mobile 2:3 portrait,
           desktop 2:1 landscape) so nothing gets awkwardly cut off. */}
       <section
-        className="relative -mx-4 min-h-dvh max-h-[640px] overflow-hidden rounded-none sm:-mx-[22px] md:mx-0 md:mt-8 md:min-h-0 md:max-h-none md:rounded-[28px]"
+        className="relative -mx-4 mt-3 min-h-[calc(100dvh-80px)] max-h-[640px] overflow-hidden rounded-t-[20px] sm:-mx-[22px] md:mx-0 md:mt-8 md:min-h-0 md:max-h-none md:rounded-[28px]"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -68,12 +68,20 @@ export default async function HomePage() {
           className="hidden w-full object-cover md:block"
           style={{ aspectRatio: "2 / 1", maxHeight: "620px" }}
         />
-        {/* Cream scrim, same tone as the wall in the photo. Pulled in tight
-            and faded out early — just enough to guarantee text contrast
-            without washing out the photo across most of its width. */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-bg via-bg/55 via-35% to-transparent to-72% md:via-bg/40 md:via-22% md:to-50%" />
+        {/* Cream scrim. Mobile: anchored top-left where the text starts,
+            full width so edge-to-edge text stays legible, fading out toward
+            the bottom-right so the jar itself stays uncovered and visible.
+            Desktop: a tighter horizontal fade matching the ~50% text column. */}
+        <div
+          className="pointer-events-none absolute inset-0 md:hidden"
+          style={{
+            backgroundImage:
+              "radial-gradient(140% 85% at 0% 0%, var(--color-bg) 0%, var(--color-bg) 30%, color-mix(in srgb, var(--color-bg) 45%, transparent) 55%, transparent 82%)",
+          }}
+        />
+        <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-bg via-bg/40 via-22% to-transparent to-50% md:block" />
 
-        <div className="absolute inset-0 flex flex-col justify-start px-4 pt-5 pb-6 sm:px-[22px] md:justify-center md:max-w-[54%] md:py-0 lg:max-w-[48%]">
+        <div className="absolute inset-0 flex flex-col justify-start px-4 pt-8 pb-6 sm:px-[22px] md:justify-center md:max-w-[54%] md:py-0 lg:max-w-[48%]">
           <div className="flex animate-rise flex-wrap gap-2">
             <span className="rounded-full bg-sage-100 px-3 py-1 text-[12px] font-bold text-sage-800">
               100% Pure Veg
@@ -83,7 +91,7 @@ export default async function HomePage() {
             </span>
           </div>
           <h1
-            className="mt-4 animate-rise font-heading font-bold text-[38px] leading-[1.06] sm:text-[46px] md:text-[52px]"
+            className="mt-4 animate-rise font-heading font-bold text-[34px] leading-[1.06] sm:text-[46px] md:text-[52px]"
             style={{ animationDelay: "70ms" }}
           >
             Amma&rsquo;s kitchen,
@@ -97,25 +105,25 @@ export default async function HomePage() {
             పిండి వంటలు · పొడులు · ఊరగాయలు
           </p>
           <p
-            className="mt-4 max-w-md animate-rise text-[15.5px] text-neutral-700"
+            className="mt-4 max-w-md animate-rise text-[14.5px] text-neutral-700 sm:text-[15.5px]"
             style={{ animationDelay: "170ms" }}
           >
             Traditional Brahmin home-style snacks, podis and pickles from
             Vizianagaram — hand-made in small batches, no preservatives, ever.
           </p>
           <div
-            className="mt-6 flex animate-rise flex-wrap items-center gap-3"
+            className="mt-6 flex animate-rise flex-col items-start gap-2.5 sm:flex-row sm:items-center sm:gap-3"
             style={{ animationDelay: "230ms" }}
           >
             <Link
               href="#bestsellers"
-              className="rounded-full bg-accent px-6 py-3.5 text-[15px] font-bold text-bg transition-colors hover:bg-accent-600 active:bg-accent-700"
+              className="rounded-full bg-accent px-5 py-2.5 text-[13.5px] font-bold text-bg transition-colors hover:bg-accent-600 active:bg-accent-700 sm:px-6 sm:py-3.5 sm:text-[15px]"
             >
               Shop bestsellers
             </Link>
             <Link
               href="/about"
-              className="rounded-full border border-line bg-bg/70 px-6 py-3.5 text-[15px] font-bold text-accent-700 backdrop-blur-sm transition-colors hover:bg-accent-100"
+              className="rounded-full border border-line bg-bg/70 px-5 py-2.5 text-[13.5px] font-bold text-accent-700 backdrop-blur-sm transition-colors hover:bg-accent-100 sm:px-6 sm:py-3.5 sm:text-[15px]"
             >
               Our story
             </Link>
