@@ -12,10 +12,10 @@ import SearchOverlay from "@/components/search-overlay";
 import JsonLd from "@/components/json-ld";
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, absoluteUrl } from "@/lib/site";
 
-// Display face — the design system's headings are all Fraunces 400.
+// Display face — headings are Fraunces, most set font-bold.
 const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "700"],
   variable: "--font-fraunces",
 });
 

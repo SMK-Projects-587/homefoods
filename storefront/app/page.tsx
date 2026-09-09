@@ -68,9 +68,10 @@ export default async function HomePage() {
           className="hidden w-full object-cover md:block"
           style={{ aspectRatio: "2 / 1", maxHeight: "620px" }}
         />
-        {/* Cream scrim, same tone as the wall in the photo, fading toward
-            the product side so the copy reads as part of the shot. */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-bg via-bg/75 to-transparent md:via-bg/55" />
+        {/* Cream scrim, same tone as the wall in the photo. Pulled in tight
+            and faded out early — just enough to guarantee text contrast
+            without washing out the photo across most of its width. */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-bg via-bg/55 via-35% to-transparent to-72% md:via-bg/40 md:via-22% md:to-50%" />
 
         <div className="absolute inset-0 flex flex-col justify-start px-4 pt-5 pb-6 sm:px-[22px] md:justify-center md:max-w-[54%] md:py-0 lg:max-w-[48%]">
           <div className="flex animate-rise flex-wrap gap-2">
