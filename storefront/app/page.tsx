@@ -82,7 +82,7 @@ export default async function HomePage() {
             </span>
           </div>
           <h1
-            className="mt-4 animate-rise font-heading text-[38px] leading-[1.06] sm:text-[46px] md:text-[52px]"
+            className="mt-4 animate-rise font-heading font-bold text-[38px] leading-[1.06] sm:text-[46px] md:text-[52px]"
             style={{ animationDelay: "70ms" }}
           >
             Amma&rsquo;s kitchen,

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-heading: var(--font-caprasimo), Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-body: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
   --font-telugu: var(--font-noto-telugu), var(--font-figtree), sans-serif;
   /* legacy alias — some components still say font-display */

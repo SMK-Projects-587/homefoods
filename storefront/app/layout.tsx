@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Caprasimo, Figtree, Noto_Sans_Telugu } from "next/font/google";
+import { Fraunces, Figtree, Noto_Sans_Telugu } from "next/font/google";
 import "./globals.css";
 import { getCategories } from "@/lib/catalog.server";
 import { CartProvider } from "@/lib/cart";
@@ -12,11 +12,11 @@ import SearchOverlay from "@/components/search-overlay";
 import JsonLd from "@/components/json-ld";
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, absoluteUrl } from "@/lib/site";
 
-// Display face — the design system's headings are all Caprasimo 400.
-const caprasimo = Caprasimo({
+// Display face — the design system's headings are all Fraunces 400.
+const fraunces = Fraunces({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-caprasimo",
+  variable: "--font-fraunces",
 });
 
 const figtree = Figtree({
@@ -117,7 +117,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${caprasimo.variable} ${figtree.variable} ${notoTelugu.variable}`}
+      className={`${fraunces.variable} ${figtree.variable} ${notoTelugu.variable}`}
     >
       <body className="font-body antialiased scroll-smooth">
         <JsonLd data={orgJsonLd} />

@@ -36,7 +36,7 @@ export default function AboutPage() {
   return (
     <div className="mx-auto max-w-[720px] px-4 py-8 sm:px-[22px] sm:py-10">
       <p className="label text-accent-700">Our story</p>
-      <h1 className="mt-2 font-heading text-[34px] leading-tight">
+      <h1 className="mt-2 font-heading font-bold text-[34px] leading-tight">
         Thirty years of filling tummies with happiness.
       </h1>
       <p className="telugu mt-2 text-[15px] text-accent-700">
