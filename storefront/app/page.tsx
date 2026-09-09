@@ -81,7 +81,7 @@ export default async function HomePage() {
         />
         <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-bg via-bg/40 via-22% to-transparent to-50% md:block" />
 
-        <div className="absolute inset-0 flex flex-col justify-start px-4 pt-8 pb-6 sm:px-[22px] md:justify-center md:max-w-[54%] md:py-0 lg:max-w-[48%]">
+        <div className="absolute inset-0 flex max-w-[88%] flex-col justify-start px-4 pt-8 pb-6 sm:max-w-[70%] sm:px-[22px] md:max-w-[54%] md:justify-center md:py-0 lg:max-w-[48%]">
           <div className="flex animate-rise flex-wrap gap-2">
             <span className="rounded-full bg-sage-100 px-3 py-1 text-[12px] font-bold text-sage-800">
               100% Pure Veg
@@ -105,7 +105,7 @@ export default async function HomePage() {
             పిండి వంటలు · పొడులు · ఊరగాయలు
           </p>
           <p
-            className="mt-4 max-w-md animate-rise text-[14.5px] text-neutral-700 sm:text-[15.5px]"
+            className="mt-4 max-w-[260px] animate-rise text-[14.5px] text-neutral-700 sm:max-w-md sm:text-[15.5px]"
             style={{ animationDelay: "170ms" }}
           >
             Traditional Brahmin home-style snacks, podis and pickles from
