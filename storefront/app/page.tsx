@@ -112,7 +112,7 @@ export default async function HomePage() {
             Vizianagaram — hand-made in small batches, no preservatives, ever.
           </p>
           <div
-            className="mt-6 flex animate-rise flex-col items-start gap-2.5 sm:flex-row sm:items-center sm:gap-3"
+            className="mt-6 flex items-stretch animate-rise flex-col w-max gap-2.5 sm:flex-row sm:items-center sm:gap-3"
             style={{ animationDelay: "230ms" }}
           >
             <Link
@@ -123,7 +123,7 @@ export default async function HomePage() {
             </Link>
             <Link
               href="/about"
-              className="rounded-full border border-line bg-bg/70 px-5 py-2.5 text-[13.5px] font-bold text-accent-700 backdrop-blur-sm transition-colors hover:bg-accent-100 sm:px-6 sm:py-3.5 sm:text-[15px]"
+              className="rounded-full border border-line bg-bg/70 px-5 text-center py-2.5 text-[13.5px] font-bold text-accent-700 backdrop-blur-sm transition-colors hover:bg-accent-100 sm:px-6 sm:py-3.5 sm:text-[15px]"
             >
               Our story
             </Link>

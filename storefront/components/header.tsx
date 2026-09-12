@@ -77,7 +77,7 @@ export default function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 lg:ml-2">
-          {/* mobile: quick search button next to the cart */}
+          {/* mobile: search only — cart lives in the bottom nav */}
           <button
             type="button"
             onClick={open}
@@ -96,7 +96,9 @@ export default function Header() {
               <path d="m20 20-3.5-3.5" />
             </svg>
           </button>
-          <CartButton />
+          <span className="hidden lg:block">
+            <CartButton />
+          </span>
         </div>
       </div>
     </header>
