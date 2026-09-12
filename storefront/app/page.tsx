@@ -81,8 +81,8 @@ export default async function HomePage() {
         />
         <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-bg via-bg/40 via-22% to-transparent to-50% md:block" />
 
-        <div className="absolute inset-0 flex max-w-[88%] flex-col justify-start px-4 pt-8 pb-6 sm:max-w-[70%] sm:px-[22px] md:max-w-[54%] md:justify-center md:py-0 lg:max-w-[48%]">
-          <div className="flex animate-rise flex-wrap gap-2">
+        <div className="absolute inset-0 flex flex-col justify-start px-4 pt-8 pb-6 sm:max-w-[70%] sm:px-[22px] md:max-w-[54%] md:justify-center md:py-0 lg:max-w-[48%]">
+          <div className="hidden md:flex animate-rise flex-wrap gap-2">
             <span className="rounded-full bg-sage-100 px-3 py-1 text-[12px] font-bold text-sage-800">
               100% Pure Veg
             </span>
@@ -91,7 +91,7 @@ export default async function HomePage() {
             </span>
           </div>
           <h1
-            className="mt-4 animate-rise font-heading font-bold text-[34px] leading-[1.06] sm:text-[46px] md:text-[52px]"
+            className="animate-rise font-heading font-bold text-[24px] leading-[1.06] sm:text-[46px] md:text-[52px]"
             style={{ animationDelay: "70ms" }}
           >
             Amma&rsquo;s kitchen,
@@ -99,13 +99,13 @@ export default async function HomePage() {
             shipped to your door.
           </h1>
           <p
-            className="telugu mt-3 animate-rise text-[17px] text-accent-700"
+            className="telugu mt-3 animate-rise text-[12px] max-w-[88%] text-accent-700"
             style={{ animationDelay: "120ms" }}
           >
             పిండి వంటలు · పొడులు · ఊరగాయలు
           </p>
           <p
-            className="mt-4 max-w-[260px] animate-rise text-[14.5px] text-neutral-700 sm:max-w-md sm:text-[15.5px]"
+            className="mt-4 max-w-[240px] animate-rise text-[14px] text-neutral-700 sm:max-w-md sm:text-[15.5px]"
             style={{ animationDelay: "170ms" }}
           >
             Traditional Brahmin home-style snacks, podis and pickles from
