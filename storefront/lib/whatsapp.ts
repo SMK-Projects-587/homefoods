@@ -21,11 +21,14 @@ function num(n: number): string {
 }
 
 // Builds the order message in the exact block format the shop uses:
+//   -----
 //   Name: <product>
 //   Qty: <n>
 //   Variant: <sku>
 //   Cost: <unit price, 2dp>
 //   ---
+//   ... (repeated per item, "---" only between items)
+//   -----
 // then a "Total without shipping: q1 * p1 + q2 * p2 = <total>" line, followed
 // by blank delivery fields for the customer to fill in.
 export function buildOrderMessage(items: CartItem[]): string {
@@ -35,7 +38,6 @@ export function buildOrderMessage(items: CartItem[]): string {
       `Qty: ${i.qty}`,
       `Variant: ${i.sku}`,
       `Cost: ${i.price.toFixed(2)}`,
-      `---`,
     ].join("\n"),
   );
 
@@ -45,7 +47,9 @@ export function buildOrderMessage(items: CartItem[]): string {
   return [
     "Hello Andhra HomeFoods! I'd like to order:",
     "",
-    blocks.join("\n"),
+    "-----",
+    blocks.join("\n---\n"),
+    "-----",
     "",
     `Total without shipping: ${expr} = ${num(total)}`,
     "",
