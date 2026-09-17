@@ -49,7 +49,7 @@ export default async function HomePage() {
           aspect-ratio trick as the about-us banner (mobile 2:3 portrait,
           desktop 2:1 landscape) so nothing gets awkwardly cut off. */}
       <section
-        className="relative -mx-4 mt-3 min-h-[calc(100svh-80px)] max-h-[640px] overflow-hidden rounded-t-[20px] sm:-mx-[22px] md:mx-0 md:mt-8 md:min-h-0 md:max-h-none md:rounded-[28px]"
+        className="relative -mx-4 mt-3 min-h-[500px] max-h-[640px] overflow-hidden rounded-t-[20px] sm:-mx-[22px] md:mx-0 md:mt-8 md:min-h-0 md:max-h-none md:rounded-[28px]"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -91,7 +91,7 @@ export default async function HomePage() {
             </span>
           </div>
           <h1
-            className="animate-rise font-heading font-bold text-[24px] leading-[1.06] sm:text-[32px] lg:text-[48px]"
+            className="animate-rise font-heading font-bold text-[29px] leading-[1.1] sm:text-[32px] lg:text-[48px]"
             style={{ animationDelay: "70ms" }}
           >
             Traditional Food,
@@ -105,7 +105,7 @@ export default async function HomePage() {
             పిండి వంటలు · పొడులు · ఊరగాయలు
           </p>
           <p
-            className="mt-4 max-w-[31ch] animate-rise text-[14px] text-neutral-700 sm:max-w-[38ch] sm:text-[15.5px]"
+            className="mt-4 max-w-[31ch] animate-rise text-[15.5px] text-neutral-700 sm:max-w-[38ch]"
             style={{ animationDelay: "170ms" }}
           >
             Traditional Brahmin home-style snacks, podis and pickles from
