@@ -24,16 +24,16 @@ export default function Header() {
         <Link href="/" className="flex min-w-0 items-center gap-2.5">
           <span className="relative size-[64px] shrink-0 overflow-hidden rounded-full">
             <Image
-              src="/logo.svg"
-              alt="Andhra HomeFoods"
+              src="/logo.webp"
+              alt="Andhra Brahmin Home Own Manufacturing Food Items"
               fill
-              className="scale-115 object-cover"
+              className="scale-178 object-cover"
               priority
             />
           </span>
           <span className="min-w-0 leading-tight">
-            <span className="block truncate font-heading font-bold text-[19px]">
-              Andhra HomeFoods
+            <span title="Andhra Brahmin Home Own Manufacturing Food Items" className="block truncate font-heading font-bold text-[19px]">
+              A.B.H.O.M.F.I
             </span>
             <span className="telugu block truncate text-[11px] text-accent-700">
               అమ్మ చేతి రుచి · Since 1992

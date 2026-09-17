@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     "Thirty years of Brahmin home-style Andhra cooking from Vizianagaram — same recipes, same hands, since 1992.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "Our story — Andhra HomeFoods",
+    title: "Our story — Andhra Brahmin Home Own Manufacturing Food Items",
     description:
       "Thirty years of Brahmin home-style Andhra cooking from Vizianagaram — same recipes, same hands, since 1992.",
     url: "/about",
@@ -50,7 +50,7 @@ export default function AboutPage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={cdnImageUrl("about-us.webp", { width: 1200 })}
-          alt="The Andhra HomeFoods kitchen, where every batch is still made by hand"
+          alt="The A.B.H.O.M.F.I kitchen, where every batch is still made by hand"
           loading="lazy"
           className="washed size-full object-cover"
         />

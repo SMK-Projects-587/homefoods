@@ -8,7 +8,7 @@ import { useCart } from "@/lib/cart";
 import { formatINR } from "@/lib/format";
 
 export default function CartPage() {
-  const { items, hydrated, subtotal, count, setQty, removeItem, clear } =
+  const { items, hydrated, subtotal, count, setQty, clear } =
     useCart();
 
   const onClear = () => {
@@ -82,13 +82,6 @@ export default function CartPage() {
                       qty={item.qty}
                       onChange={(q) => setQty(item.variantId, q)}
                     />
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.variantId)}
-                      className="cursor-pointer text-[13px] font-semibold text-neutral-500 transition-colors hover:text-accent-700"
-                    >
-                      Remove
-                    </button>
                   </div>
                 </div>
               </li>

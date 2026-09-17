@@ -54,7 +54,7 @@ export default function OgImage() {
               maxWidth: 900,
             }}
           >
-            Amma&rsquo;s kitchen, shipped to your door.
+            Traditional Food, shipped to your door.
           </div>
           <div style={{ fontSize: 30, color: "#8c491a" }}>
             Andhra pickles · podis · snacks · sweets — since 1992

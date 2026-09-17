@@ -22,7 +22,7 @@ export async function generateMetadata({
     title: category.name,
     description:
       category.description ||
-      `${category.name} — traditional Andhra ${category.name.toLowerCase()} from Andhra HomeFoods.`,
+      `${category.name} — traditional Andhra ${category.name.toLowerCase()} from Andhra Brahmin Home Own Manufacturing Food Items.`,
     alternates: { canonical: path },
     openGraph: { title: category.name, description: category.description, url: path },
   };

@@ -94,7 +94,7 @@ export default async function HomePage() {
             className="animate-rise font-heading font-bold text-[24px] leading-[1.06] sm:text-[46px] md:text-[52px]"
             style={{ animationDelay: "70ms" }}
           >
-            Amma&rsquo;s kitchen,
+            Traditional Food,
             <br />
             shipped to your door.
           </h1>

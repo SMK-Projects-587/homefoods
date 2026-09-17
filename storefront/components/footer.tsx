@@ -10,18 +10,18 @@ const COPYRIGHT_YEAR = new Date().getFullYear();
 export default function Footer({ categories }: { categories: Category[] }) {
   return (
     <footer className="mt-12 border-t border-line bg-surface pb-24 lg:pb-0">
-      <div className="mx-auto grid max-w-[1160px] gap-8 px-4 py-12 sm:px-[22px] md:grid-cols-3">
+      <div className="mx-auto grid max-w-[1160px] gap-8 px-4 py-4 md:py-12 sm:px-[22px] md:grid-cols-3">
         <div>
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="relative size-16 shrink-0 overflow-hidden">
+          <Link href="/" className="flex items-center flex-col items-start gap-2.5">
+            <span className="relative size-[140px] lg:size-[124px] shrink-0 overflow-hidden rounded-full">
               <Image
-                src="/logo.svg"
-                alt="Andhra HomeFoods"
+                src="/logo.webp"
+                alt="Andhra Brahmin Home Own Manufacturing Food Items"
                 fill
                 className="scale-115 object-cover"
               />
             </span>
-            <span className="font-heading text-[19px]">Andhra HomeFoods</span>
+            <span className="font-heading inline text-[19px]">Andhra Brahmin Home Own Manufacturing Food Items</span>
           </Link>
           <p className="mt-3 max-w-xs text-[14px] text-neutral-700">
             Traditional Brahmin home-style snacks, podis, pickles and sweets —
@@ -66,7 +66,7 @@ export default function Footer({ categories }: { categories: Category[] }) {
         </div>
       </div>
       <p className="border-t border-line py-4 text-center text-[12px] text-neutral-500">
-        © {COPYRIGHT_YEAR} Andhra HomeFoods · Vizianagaram, Andhra
+        © {COPYRIGHT_YEAR} Andhra Brahmin Home Own Manufacturing Food Items · Vizianagaram, Andhra
         Pradesh
       </p>
     </footer>

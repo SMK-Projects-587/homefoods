@@ -5,9 +5,9 @@ export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.andhrahomefoods.in"
 ).replace(/\/$/, "");
 
-export const SITE_NAME = "Andhra HomeFoods";
+export const SITE_NAME = "Andhra Brahmin Home Own Manufacturing Food Items";
 
-export const SITE_TAGLINE = "Amma's kitchen, shipped to your door";
+export const SITE_TAGLINE = "Traditional Food, shipped to your door";
 
 export const SITE_DESCRIPTION =
   "Traditional Brahmin home-style Andhra foods from Vizianagaram since 1992: pindi vantalu, podis, pickles, sweets and papads — hand-made in small batches, 100% pure veg, no preservatives.";
