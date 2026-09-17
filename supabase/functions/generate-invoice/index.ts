@@ -56,9 +56,9 @@ function json(status: number, body: unknown): Response {
 // GSTIN yet) are simply omitted from the printed header.
 // ---------------------------------------------------------------------------
 const BUSINESS = {
-  name: "HomeFoods (PLACEHOLDER — set real business name)",
-  addressLines: ["PLACEHOLDER address line 1", "PLACEHOLDER city, state - PIN, India"],
-  phone: "PLACEHOLDER phone",
+  name: "Andhra Brahmin Home Own Manufacturing Food Items",
+  addressLines: ["Door No. 25-2-5/6 Bondulagudem", "Vizianagaram, Andhra Pradesh - PIN, India"],
+  phone: "9290414988",
   gstin: "", // leave blank if not GST-registered; omitted from the PDF when empty
 };
 
