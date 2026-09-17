@@ -9,6 +9,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import BottomNav from "@/components/bottom-nav";
 import SearchOverlay from "@/components/search-overlay";
+import CheckoutConfirmDialog from "@/components/checkout-confirm-dialog";
 import JsonLd from "@/components/json-ld";
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, absoluteUrl } from "@/lib/site";
 
@@ -150,6 +151,7 @@ export default async function RootLayout({
               <BottomNav />
             </Suspense>
             <SearchOverlay />
+            <CheckoutConfirmDialog />
           </SearchProvider>
         </CartProvider>
       </body>
