@@ -148,7 +148,7 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
     .select(
       `id, slug, name, native_name, description, keywords, meta_title, meta_description,
        category:categories(name, slug),
-       variants:product_variants!inner(id, title, sku, attributes, price, compare_at_price, stock, in_stock, is_default),
+       variants:product_variants!inner(id, title, sku, price, compare_at_price, stock, in_stock, is_default),
        images:product_images(id, image_path, alt_text, is_primary, sort_order)`,
     )
     .eq("slug", slug)

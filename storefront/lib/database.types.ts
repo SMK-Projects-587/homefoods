@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -170,7 +175,6 @@ export type Database = {
       }
       order_items: {
         Row: {
-          attributes: Json
           created_at: string
           id: number
           line_total: number
@@ -184,7 +188,6 @@ export type Database = {
           variant_title: string
         }
         Insert: {
-          attributes?: Json
           created_at?: string
           id?: never
           line_total: number
@@ -198,7 +201,6 @@ export type Database = {
           variant_title: string
         }
         Update: {
-          attributes?: Json
           created_at?: string
           id?: never
           line_total?: number
@@ -369,7 +371,6 @@ export type Database = {
       }
       product_variants: {
         Row: {
-          attributes: Json
           compare_at_price: number | null
           created_at: string
           id: number
@@ -384,7 +385,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          attributes?: Json
           compare_at_price?: number | null
           created_at?: string
           id?: never
@@ -399,7 +399,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          attributes?: Json
           compare_at_price?: number | null
           created_at?: string
           id?: never
@@ -537,6 +536,20 @@ export type Database = {
       }
     }
     Functions: {
+      dashboard_order_stats: {
+        Args: never
+        Returns: {
+          last_month_completed_count: number
+          last_month_order_count: number
+          last_month_revenue: number
+          lifetime_completed_count: number
+          lifetime_order_count: number
+          lifetime_revenue: number
+          this_month_completed_count: number
+          this_month_order_count: number
+          this_month_revenue: number
+        }[]
+      }
       generate_unique_slug: {
         Args: { source_name: string; tbl: unknown }
         Returns: string
@@ -650,12 +663,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -679,11 +692,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -704,11 +717,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -729,11 +742,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -746,11 +759,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -767,4 +780,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-

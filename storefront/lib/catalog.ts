@@ -16,7 +16,6 @@ export type VariantRow = Pick<
   | "id"
   | "title"
   | "sku"
-  | "attributes"
   | "price"
   | "compare_at_price"
   | "stock"
