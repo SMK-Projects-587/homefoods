@@ -41,6 +41,13 @@ export function ProductGridSkeleton({
   );
 }
 
+// Mirrors components/shop-hero.tsx, shared by the shop and category pages.
+export function HeroSkeleton() {
+  return (
+    <div className="h-[200px] animate-pulse rounded-3xl bg-neutral-200 sm:h-[260px] md:h-[320px]" />
+  );
+}
+
 // The horizontally-scrolling category chip row on the shop / category pages.
 export function ChipsSkeleton({ count = 5 }: { count?: number }) {
   return (
