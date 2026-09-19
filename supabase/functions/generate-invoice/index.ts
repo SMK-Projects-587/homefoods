@@ -57,9 +57,9 @@ function json(status: number, body: unknown): Response {
 // ---------------------------------------------------------------------------
 const BUSINESS = {
   name: "Andhra Brahmin Home Own Manufacturing Food Items",
-  addressLines: ["Door No. 25-2-5/6 Bondulagudem", "Vizianagaram, Andhra Pradesh - PIN, India"],
+  addressLines: ["Door No. 25-2-5/6 Bondulagudem", "Vizianagaram, Andhra Pradesh - 535002, India"],
   phone: "9290414988",
-  gstin: "", // leave blank if not GST-registered; omitted from the PDF when empty
+  gstin: "37CDYPR7915J1ZG",
 };
 
 type Invoice = {
