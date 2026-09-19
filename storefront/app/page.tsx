@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import CatalogImage from "@/components/catalog-image";
 import ProductCard from "@/components/product-card";
-import { getCategories, getProducts } from "@/lib/catalog.server";
+import { getBestsellers, getCategories, getProducts } from "@/lib/catalog.server";
 import { cdnImageUrl } from "@/lib/supabase";
 import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from "@/lib/site";
 
@@ -51,11 +51,11 @@ function TrustTile({
 }
 
 export default async function HomePage() {
-  const [categories, products] = await Promise.all([
+  const [categories, products, bestsellers] = await Promise.all([
     getCategories(),
     getProducts(),
+    getBestsellers(12),
   ]);
-  const bestsellers = products.slice(0, 8);
   const countFor = (slug: string) =>
     products.filter((p) => p.categorySlug === slug).length;
 

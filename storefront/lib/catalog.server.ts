@@ -139,6 +139,26 @@ export async function getProducts(opts?: {
   return (data as unknown as CardRow[]).map(toCard);
 }
 
+// Curated via products.is_bestseller / bestseller_rank (staff sets these
+// directly for now — see 20260919130000_product_bestsellers.sql). Falls
+// back to the regular catalog order when nothing's been flagged yet, so the
+// homepage section is never just empty.
+export async function getBestsellers(limit = 12): Promise<ProductCardData[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
+  const { data, error } = await supabase
+    .from("products")
+    .select(CARD_SELECT)
+    .eq("is_bestseller", true)
+    .order("bestseller_rank", { ascending: true, nullsFirst: false })
+    .order("name")
+    .limit(limit);
+  if (error) throw error;
+  const rows = (data as unknown as CardRow[]).map(toCard);
+  return rows.length > 0 ? rows : getProducts({ limit });
+}
+
 // Slim, sitemap-only query — deliberately not routed through getProducts()
 // (ProductCardData is also returned by the client-safe search RPC, so
 // widening it would mean widening that RPC too, just for a lastModified
