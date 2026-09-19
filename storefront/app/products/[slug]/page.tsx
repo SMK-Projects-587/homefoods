@@ -22,7 +22,7 @@ export async function generateMetadata({
   const path = `/products/${product.slug}`;
   const description = product.meta_description || product.description;
   const image = product.images[0]?.image_path
-    ? productImageUrl(product.images[0].image_path)
+    ? productImageUrl(product.images[0].image_path, "zoom")
     : undefined;
   return {
     title: product.meta_title || product.name,

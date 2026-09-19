@@ -101,7 +101,7 @@ export async function getCategories(): Promise<Category[]> {
   cacheTag("categories");
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, slug, description, image_path, native_name")
+    .select("id, name, slug, description, image_path, native_name, updated_at")
     .order("id");
   if (error) throw error;
   return data;
@@ -113,7 +113,7 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
   cacheTag("categories");
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, slug, description, image_path, native_name")
+    .select("id, name, slug, description, image_path, native_name, updated_at")
     .eq("slug", slug)
     .maybeSingle();
   if (error) throw error;
@@ -137,6 +137,24 @@ export async function getProducts(opts?: {
   const { data, error } = await query;
   if (error) throw error;
   return (data as unknown as CardRow[]).map(toCard);
+}
+
+// Slim, sitemap-only query — deliberately not routed through getProducts()
+// (ProductCardData is also returned by the client-safe search RPC, so
+// widening it would mean widening that RPC too, just for a lastModified
+// date).
+export async function getProductSitemapEntries(): Promise<
+  { slug: string; updatedAt: string }[]
+> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
+  const { data, error } = await supabase
+    .from("products")
+    .select("slug, updated_at")
+    .order("slug");
+  if (error) throw error;
+  return data.map((p) => ({ slug: p.slug, updatedAt: p.updated_at }));
 }
 
 export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {

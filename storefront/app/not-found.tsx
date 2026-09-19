@@ -1,4 +1,13 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+// Without this, a 404 inherits whatever metadata belongs to the route that
+// failed to resolve — meaning Google could index a not-found page under the
+// generic site title. Give it its own title and keep it out of the index.
+export const metadata: Metadata = {
+  title: "Page not found",
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (

@@ -4,13 +4,31 @@ import CatalogImage from "@/components/catalog-image";
 import ProductCard from "@/components/product-card";
 import { getCategories, getProducts } from "@/lib/catalog.server";
 import { cdnImageUrl } from "@/lib/supabase";
+import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from "@/lib/site";
 
 // Data is cached per-fetch via `use cache` + cacheTag in lib/catalog.server,
 // invalidated on catalog changes through /api/revalidate (Cache Components).
 
+// Overrides the generic branded app/opengraph-image.tsx card (that one's a
+// fallback for pages with no real photography) with the actual hero photo —
+// declaring `openGraph`/`twitter` here fully replaces the root layout's, so
+// title/description/images are all restated rather than assumed inherited.
+const heroImage = cdnImageUrl("homepage-landing.webp", { width: 1200 });
+
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
-  openGraph: { url: "/" },
+  openGraph: {
+    url: "/",
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    images: [{ url: heroImage, width: 1200, height: 600, alt: SITE_TAGLINE }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    images: [heroImage],
+  },
 };
 
 function TrustTile({

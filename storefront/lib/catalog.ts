@@ -8,7 +8,7 @@ import type { Tables } from "./database.types";
 
 export type Category = Pick<
   Tables<"categories">,
-  "id" | "name" | "slug" | "description" | "image_path" | "native_name"
+  "id" | "name" | "slug" | "description" | "image_path" | "native_name" | "updated_at"
 >;
 
 export type VariantRow = Pick<
