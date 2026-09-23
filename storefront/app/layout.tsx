@@ -43,10 +43,10 @@ export const metadata: Metadata = {
   keywords: [
     "Andhra pickles",
     "avakaya",
-    "gongura",
+    "nimmakaya",
     "karam podi",
     "kandi podi",
-    "murukulu",
+    "snacks",
     "Andhra sweets",
     "podi",
     "Vizianagaram",
@@ -84,7 +84,7 @@ const orgJsonLd = {
   url: SITE_URL,
   logo: absoluteUrl("/opengraph-image"),
   description: SITE_DESCRIPTION,
-  foundingDate: "1992",
+  foundingDate: "1993",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Vizianagaram",

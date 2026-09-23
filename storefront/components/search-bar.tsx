@@ -7,7 +7,7 @@ import CatalogImage from "./catalog-image";
 import { searchProducts, type ProductCardData } from "@/lib/catalog";
 import { formatINR } from "@/lib/format";
 
-const POPULAR = ["avakaya", "karam podi", "gongura", "murukulu", "kaju katli"];
+const POPULAR = ["avakaya", "karam podi", "nimmakaya", "snack"];
 
 export default function SearchBar({
   defaultValue = "",
