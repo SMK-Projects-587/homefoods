@@ -57,7 +57,7 @@ export default function OgImage() {
             Traditional Food, shipped to your door.
           </div>
           <div style={{ fontSize: 30, color: "#8c491a" }}>
-            Andhra pickles · podis · snacks · sweets — since 1992
+            Andhra pickles · podis · snacks · sweets — since 1993
           </div>
         </div>
 

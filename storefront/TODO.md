@@ -8,28 +8,13 @@ lives in the repo-root `TODO.md`.
 ## Blockers — dummy values to replace
 
 - [ ] **`NEXT_PUBLIC_SITE_URL`** — real production origin, no trailing slash.
-      Currently defaults to the placeholder `https://www.andhrahomefoods.in`
-      in `lib/site.ts`. This one value drives `metadataBase`, **every
-      canonical URL**, all Open Graph/Twitter URLs, `sitemap.xml`, and the
-      `robots.txt` host + sitemap line. Wrong value = wrong canonicals =
-      broken SEO. Set it in the hosting env (and `.env.local` for parity).
-- [ ] **`NEXT_PUBLIC_WHATSAPP_NUMBER`** — the real WhatsApp business number,
-      digits only with country code, no `+` (e.g. `9198…`). Currently
-      defaults to the placeholder `919876543210` in `lib/whatsapp.ts`. Every
-      "Order on WhatsApp" button builds `https://wa.me/<this>?text=…`.
-- [ ] **Product & category photography.** Seeded `image_path`s point at
-      objects that don't exist yet (`products/<slug>/main.jpg`,
-      `.../detail-1.jpg`); categories mostly have empty `image_path`. Until
-      real images are uploaded to the `images` bucket, the storefront renders
-      the fallback placeholder tiles (the pale tiles you see in the hero,
-      cards, product page, about hero). Uploading real photos is the single
-      biggest visual win. (Depends on the R2/image work in root `TODO.md`.)
-- [ ] **Telugu `native_name` values in the production DB.** The
-      `20260720120000_native_names.sql` migration adds the (nullable) column;
-      the actual Telugu names only exist in local `supabase/seed.sql`.
-      Populate them in production (admin/dashboard), and have a native Telugu
-      speaker proofread the seeded ones — double-check `కాజు కత్లీ`
-      (Kaju Katli), `నిమ్మకాయ ఊరగాయ`, `గోంగూర ఊరగాయ`.
+      `lib/site.ts` now defaults to `https://www.andhrabrahminhomefoods.org`
+      (the real domain), but set this explicitly in the Vercel env so it
+      doesn't silently rely on the fallback. This one value drives
+      `metadataBase`, **every canonical URL**, all Open Graph/Twitter URLs,
+      `sitemap.xml`, and the `robots.txt` host + sitemap line. Wrong value =
+      wrong canonicals = broken SEO — this was live on prod pointing at an
+      unrelated WordPress domain (`www.andhrahomefoods.in`) until 2026-09-20.
 
 ## Confirm — decisions I made that you should sign off on
 
@@ -40,13 +25,10 @@ lives in the repo-root `TODO.md`.
       line, added a one-line greeting, and appended a
       `My details — Name / Delivery address / Pincode` block (an order needs a
       delivery address). Confirm or trim.
-- [ ] **Category mismatch with the design.** The handoff showed 5 categories
-      (incl. "Papads & Vadiyalu"); the real catalog has 4 (Pickles, Spice
-      Powders, Snacks, Sweets). Decide whether to add a Papads category +
-      products, or leave at 4.
-- [ ] **Brand facts.** Footer/about assert "Vizianagaram, Andhra Pradesh" and
-      "since 1992" (from the design). Confirm these are accurate for the real
-      business before launch — they're also emitted in Organization JSON-LD.
+- [x] **Brand facts.** Footer/about assert "Vizianagaram, Andhra Pradesh" and
+      "since 1993" — confirmed accurate, updated from the design's "1992"
+      everywhere (footer, header, about, homepage, layout JSON-LD, OG image,
+      site description).
 
 ## SEO follow-ups (nice to have, not blocking)
 
@@ -56,10 +38,11 @@ lives in the repo-root `TODO.md`.
 - [ ] Analytics (GA4 / Plausible / etc.) — not wired yet.
 - [ ] Set a Twitter handle (`twitter.site` / `creator`) in `app/layout.tsx`
       metadata if there's a brand account.
-- [ ] Branded **favicon / apple-touch-icon / web manifest** — still the
-      scaffold `app/favicon.ico`.
-- [ ] `app/opengraph-image.tsx` uses a 🌿 emoji as the logo mark — swap for
-      the real logo if there is one.
+- [x] Branded **favicon / apple-touch-icon** — replaced with a cropped brand
+      logo icon (`app/icon.png`, `app/apple-icon.png`), matching the header's
+      circular logo badge.
+- [ ] `app/opengraph-image.tsx` still uses a 🌿 emoji as the logo mark, not
+      the real logo — swap it for the actual brand mark.
 - [ ] `sitemap.ts` uses build time for `lastModified`; could use each row's
       `updated_at` for more accurate freshness signals.
 - [ ] When product reviews exist, add `aggregateRating` to the Product JSON-LD
@@ -71,11 +54,16 @@ lives in the repo-root `TODO.md`.
       (`chilli/turmeric/paper/cream/leaf/soft`) were kept so nothing broke
       mid-migration. The only remaining consumer is `components/veg-mark.tsx`,
       which is now **unused** — delete `veg-mark.tsx`, then remove the aliases.
-- [ ] **Search result cards are second-class.** `search_products()` returns a
-      flat row without `native_name` or a default variant, so search-result
-      cards show no Telugu line and link through instead of quick-adding
-      (see `lib/catalog.ts` `searchProducts`). Enhance the RPC to also return
-      `native_name` + the default variant `id/sku/title` for full parity.
+- [x] **Search result cards: Telugu line.** `search_products()` now returns
+      `native_name` (`20260920080000_search_products_native_name.sql`);
+      `searchProducts()` in `lib/catalog.ts` maps it through, and
+      `product-card.tsx` already rendered it conditionally, so no component
+      change was needed. Needs `supabase db push` to reach prod.
+- [ ] **Search result cards still can't quick-add.** `search_products()` still
+      doesn't return default-variant `id/sku/title`, so `defaultVariant` and
+      `variants` stay empty for search cards and they link through to the
+      product page instead of quick-adding (see `lib/catalog.ts`
+      `searchProducts`).
 - [ ] Run a production **`next build`** to confirm ISR/prerender manifests and
       that the dynamic OG image route builds cleanly.
 

@@ -5,12 +5,12 @@ import { cdnImageUrl } from "@/lib/supabase";
 export const metadata: Metadata = {
   title: "Our story",
   description:
-    "Thirty years of Brahmin home-style Andhra cooking from Vizianagaram — same recipes, same hands, since 1992.",
+    "Thirty years of Brahmin home-style Andhra cooking from Vizianagaram — same recipes, same hands, since 1993.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "Our story — Andhra Brahmin Home Own Manufacturing Food Items",
     description:
-      "Thirty years of Brahmin home-style Andhra cooking from Vizianagaram — same recipes, same hands, since 1992.",
+      "Thirty years of Brahmin home-style Andhra cooking from Vizianagaram — same recipes, same hands, since 1993.",
     url: "/about",
   },
 };
@@ -58,7 +58,7 @@ export default function AboutPage() {
 
       <div className="mt-6 space-y-4 text-[15px] text-neutral-700">
         <p>
-          It started in <strong className="text-ink">1992</strong>, in a small
+          It started in <strong className="text-ink">1993</strong>, in a small
           kitchen in Vizianagaram, with a mortar, a few jars, and recipes passed
           down through generations of a Brahmin household.
         </p>

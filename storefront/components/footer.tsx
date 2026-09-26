@@ -25,7 +25,7 @@ export default function Footer({ categories }: { categories: Category[] }) {
           </Link>
           <p className="mt-3 max-w-xs text-[14px] text-neutral-700">
             Traditional Brahmin home-style snacks, podis, pickles and sweets —
-            hand-made in small batches since 1992.
+            hand-made in small batches since 1993.
           </p>
           <p className="telugu mt-3 text-[14px] text-accent-700">
             అమ్మ చేతి రుచి, ప్రేమతో.

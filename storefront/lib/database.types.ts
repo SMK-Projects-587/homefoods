@@ -611,6 +611,7 @@ export type Database = {
           is_active: boolean
           keywords: string[]
           name: string
+          native_name: string | null
           price: number
           primary_image_path: string
           rank: number

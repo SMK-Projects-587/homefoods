@@ -96,9 +96,7 @@ export async function searchProducts(
     id: row.id,
     slug: row.slug,
     name: row.name,
-    // The search RPC returns a flat row without native_name or variant ids,
-    // so these cards show no Telugu line and link through instead of quick-add.
-    nativeName: null,
+    nativeName: row.native_name,
     price: row.price,
     compareAtPrice: row.compare_at_price,
     inStock: row.in_stock,

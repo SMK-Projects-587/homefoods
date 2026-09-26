@@ -36,7 +36,7 @@ export default function Header() {
               A.B.H.O.M.F.I
             </span>
             <span className="telugu block truncate text-[11px] text-accent-700">
-              అమ్మ చేతి రుచి · Since 1992
+              అమ్మ చేతి రుచి · Since 1993
             </span>
           </span>
         </Link>

@@ -243,7 +243,7 @@ export default async function HomePage() {
       {/* About teaser */}
       <section className="mb-10 mt-2 rounded-lg bg-sage-100 px-5 py-6 sm:px-8">
         <h2 className="font-heading text-[24px] text-sage-900">
-          Filling tummies with happiness since 1992.
+          Filling tummies with happiness since 1993.
         </h2>
         <p className="mt-2 max-w-2xl text-[14.5px] text-sage-800">
           What began in a small Vizianagaram kitchen is now amma&rsquo;s taste on

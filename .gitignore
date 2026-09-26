@@ -2,6 +2,10 @@
 .env
 .env.*
 !.env.example
+rclone.conf
+
+# R2 migration staging
+r2-migration-data/
 
 # Supabase local artifacts
 supabase/.temp
