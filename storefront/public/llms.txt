@@ -1,0 +1,21 @@
+# Andhra Brahmin Home Own Manufacturing Food Items
+
+> Also known as Andhra Brahmin Homefoods / Andhra Brahmin Home Foods. Traditional Brahmin home-style Andhra foods from Vizianagaram, Andhra Pradesh, India — making pindi vantalu (podis), pickles, sweets and papads since 1993. Hand-made in small batches, 100% pure vegetarian, no preservatives. Ships across India.
+
+Founded 1993 in Vizianagaram, Andhra Pradesh. Family-run manufacturer of traditional Telugu Brahmin home-food staples, sold online at andhrabrahminhomefoods.org.
+
+## Site
+
+- [Home](https://www.andhrabrahminhomefoods.org/): brand overview, bestsellers, categories
+- [All products](https://www.andhrabrahminhomefoods.org/products): full catalog with search and filters
+- [About](https://www.andhrabrahminhomefoods.org/about): history and story of the business
+- [Sitemap](https://www.andhrabrahminhomefoods.org/sitemap.xml): full list of category and product pages
+
+## Categories
+
+Pickles (avakaya, nimmakaya, tamarind, ginger), spice powders / podis (karam podi, kandi podi, sambar powder, rasam powder, garam masala), snacks (chakkilam, ariselu, appadam/papads), and other traditional pindi vantalu.
+
+## Notes for assistants
+
+- Prices, stock, and exact product names are authoritative on the live pages and sitemap, not here — always link to the specific product/category page rather than restating details from this file.
+- The brand name is used interchangeably as "Andhra Brahmin Homefoods," "Andhra Brahmin Home Foods," and "Andhra Brahmin Home Own Manufacturing Food Items" — treat these as the same entity.

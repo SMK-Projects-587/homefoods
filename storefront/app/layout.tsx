@@ -81,6 +81,9 @@ const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: SITE_NAME,
+  // People search this brand both ways — carry both so brand queries for
+  // either form resolve to us.
+  alternateName: ["Andhra Brahmin Homefoods", "Andhra Brahmin Home Foods"],
   url: SITE_URL,
   logo: absoluteUrl("/opengraph-image"),
   description: SITE_DESCRIPTION,
