@@ -13,8 +13,7 @@
     "types": "supabase gen types typescript --local > types/database.types.ts"
   },
   "devDependencies": {
-    "supabase": "2.109.0",
-    "wrangler": "4.107.0"
+    "supabase": "2.109.0"
   },
   "private": true
 }

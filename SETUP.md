@@ -3,7 +3,7 @@
 Everything that defines this backend is in git: `supabase/config.toml` (stack
 config), `supabase/migrations/` (schema), `supabase/seed.sql` (dev data), the
 `r2-presign` edge function, and the **pinned** tool versions in
-`package.json`/`package-lock.json` (supabase CLI 2.109.0, wrangler 4.107.0,
+`package.json`/`package-lock.json` (supabase CLI 2.109.0,
 Node 22 via `.nvmrc`). There is no docker-compose to maintain — the Supabase
 CLI *is* the compose layer: `supabase start` assembles the exact same Docker
 stack (Postgres 17, PostgREST, GoTrue, Studio, edge runtime, …) from
@@ -29,7 +29,7 @@ npm run setup        # = bash scripts/setup.sh
 This is idempotent and does, in order:
 
 1. Verifies Docker is running and Node ≥ 20.
-2. `npm ci` — installs the **pinned** supabase CLI and wrangler from the
+2. `npm ci` — installs the **pinned** supabase CLI from the
    lockfile (never use a global/`npx`-latest CLI; version drift between
    machines is exactly what this setup prevents).
 3. Creates `.env` from `.env.example` if missing (you fill in real values).

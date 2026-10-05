@@ -16,8 +16,8 @@ command -v node >/dev/null || fail "Node.js is not installed (need >= 20; .nvmrc
 node_major=$(node -p 'process.versions.node.split(".")[0]')
 [ "$node_major" -ge 20 ] || fail "Node.js >= 20 required, found $(node --version)"
 
-# --- dependencies (pinned supabase CLI + wrangler via package-lock) ----------
-echo "==> Installing pinned dependencies (supabase CLI, wrangler)"
+# --- dependencies (pinned supabase CLI via package-lock) ----------
+echo "==> Installing pinned dependencies (supabase CLI)"
 npm ci
 
 # --- env files ---------------------------------------------------------------
