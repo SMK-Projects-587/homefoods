@@ -4,8 +4,12 @@ import type { Metadata } from "next";
 import ProductCard from "@/components/product-card";
 import ShopHero from "@/components/shop-hero";
 import CategoryChips from "@/components/category-chips";
-import { searchProducts } from "@/lib/catalog";
-import { getCategories, getProducts, logSearch } from "@/lib/catalog.server";
+import {
+  getCategories,
+  getProducts,
+  logSearch,
+  searchProductsCached,
+} from "@/lib/catalog.server";
 import { SITE_DESCRIPTION } from "@/lib/site";
 
 // Dynamic by virtue of reading searchParams (wrapped in <Suspense>); under
@@ -44,7 +48,7 @@ export default async function ProductsPage({
 
   const [categories, products] = await Promise.all([
     getCategories(),
-    term ? searchProducts(term, { categorySlug: category }) : getProducts(),
+    term ? searchProductsCached(term, category) : getProducts(),
   ]);
 
   const activeCategory = term

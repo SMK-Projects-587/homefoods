@@ -5,11 +5,23 @@ import BuyBox from "@/components/buy-box";
 import ProductGallery from "@/components/product-gallery";
 import ProductCard from "@/components/product-card";
 import JsonLd from "@/components/json-ld";
-import { getProductBySlug, getProducts } from "@/lib/catalog.server";
+import {
+  getProductBySlug,
+  getProductSitemapEntries,
+  getProducts,
+} from "@/lib/catalog.server";
 import { productImageUrl } from "@/lib/supabase";
 import { SITE_NAME, absoluteUrl } from "@/lib/site";
 
 // Data is cached per-fetch via `use cache` + cacheTag in lib/catalog.server.
+
+// Prerender every product at build so the first visitor gets a ready page
+// instead of paying for the Supabase round-trips on a cold cache. Slugs added
+// later still render on demand, then are cached.
+export async function generateStaticParams() {
+  const entries = await getProductSitemapEntries();
+  return entries.map((e) => ({ slug: e.slug }));
+}
 
 export async function generateMetadata({
   params,

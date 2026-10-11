@@ -47,6 +47,9 @@ const nextConfig: NextConfig = {
   // Cache Components (PPR + `use cache`): catalog data is cached at runtime and
   // invalidated by tag (see lib/catalog.ts + app/api/revalidate). Build time
   // stays constant regardless of catalog size.
+  // Next 16 only honours quality values on this allowlist; 90 is for the logo,
+  // which gets visibly soft at the default 75.
+  images: { qualities: [75, 90] },
   cacheComponents: true,
   experimental: {
     // Re-enable the client Router Cache for dynamic routes. Next 15+ defaults

@@ -114,6 +114,7 @@ export default function CatalogImage({
       src={productImageUrl(path, preset)}
       alt={alt}
       loading={priority ? "eager" : "lazy"}
+      decoding="async"
       fetchPriority={priority ? "high" : undefined}
       className={className}
       onError={() => setErrored(true)}

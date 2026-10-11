@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { preconnect } from "react-dom";
 import { Fraunces, Figtree, Noto_Sans_Telugu } from "next/font/google";
 import "./globals.css";
 import { getCategories } from "@/lib/catalog.server";
@@ -118,6 +119,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const categories = await getCategories();
+  // Open the TCP/TLS connection to the image CDN during HTML parse so the
+  // first product image doesn't pay for the handshake.
+  const cdn = process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL;
+  if (cdn) preconnect(cdn, { crossOrigin: "anonymous" });
   return (
     <html
       lang="en"

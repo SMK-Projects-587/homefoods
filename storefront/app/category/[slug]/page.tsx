@@ -9,6 +9,12 @@ import { absoluteUrl } from "@/lib/site";
 
 // Data is cached per-fetch via `use cache` + cacheTag in lib/catalog.server.
 
+// Prerender known categories at build; new ones render on demand then cache.
+export async function generateStaticParams() {
+  const categories = await getCategories();
+  return categories.map((c) => ({ slug: c.slug }));
+}
+
 export async function generateMetadata({
   params,
 }: {

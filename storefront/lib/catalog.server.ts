@@ -1,6 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { supabase } from "./supabase";
+import { searchProducts } from "./catalog";
 import type {
   Category,
   ImageRow,
@@ -93,6 +94,22 @@ export function logSearch(term: string, resultCount: number): void {
     .then(({ error }) => {
       if (error) console.error("log_search failed:", error.message);
     });
+}
+
+// Cached server-side wrapper for the /products?q= results page. The term is
+// user input, so it's normalised (trim/lowercase/length-capped) before it
+// becomes a cache key — otherwise casing/whitespace variants of the same query
+// would each get their own entry. Short-lived and tagged "products" so a
+// catalog edit (webhook) clears it too; search_products() runs live on a miss.
+// Not used by the search bar, which calls the RPC from the browser.
+export async function searchProductsCached(
+  term: string,
+  categorySlug?: string,
+): Promise<ProductCardData[]> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("products");
+  return searchProducts(term.trim().toLowerCase().slice(0, 64), { categorySlug });
 }
 
 export async function getCategories(): Promise<Category[]> {

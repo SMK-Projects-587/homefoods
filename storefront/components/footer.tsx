@@ -13,12 +13,14 @@ export default function Footer({ categories }: { categories: Category[] }) {
       <div className="mx-auto grid max-w-[1160px] gap-8 px-4 py-4 md:py-12 sm:px-[22px] md:grid-cols-3">
         <div>
           <Link href="/" className="flex items-center flex-col items-start gap-2.5">
-            <span className="relative size-[140px] lg:size-[124px] shrink-0 overflow-hidden rounded-full">
+            <span className="relative size-[140px] lg:size-[124px] shrink-0">
               <Image
                 src="/logo.webp"
                 alt="Andhra Brahmin Home Own Manufacturing Food Items"
                 fill
-                className="scale-115 object-cover"
+                sizes="280px"
+                quality={90}
+                className="object-cover"
               />
             </span>
             <span className="font-heading inline text-[19px]">Andhra Brahmin Home Own Manufacturing Food Items</span>

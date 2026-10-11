@@ -41,8 +41,7 @@ lives in the repo-root `TODO.md`.
 - [x] Branded **favicon / apple-touch-icon** — replaced with a cropped brand
       logo icon (`app/icon.png`, `app/apple-icon.png`), matching the header's
       circular logo badge.
-- [ ] `app/opengraph-image.tsx` still uses a 🌿 emoji as the logo mark, not
-      the real logo — swap it for the actual brand mark.
+- [x] `app/opengraph-image.tsx` now uses the real logo (`app/icon.png`).
 - [ ] `sitemap.ts` uses build time for `lastModified`; could use each row's
       `updated_at` for more accurate freshness signals.
 - [ ] When product reviews exist, add `aggregateRating` to the Product JSON-LD

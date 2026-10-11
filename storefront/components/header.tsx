@@ -22,12 +22,14 @@ export default function Header() {
     <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1160px] items-center gap-1 px-4 py-3 sm:px-[22px]">
         <Link href="/" className="flex min-w-0 items-center gap-2.5">
-          <span className="relative size-[64px] shrink-0 overflow-hidden rounded-full">
+          <span className="relative size-[64px] shrink-0">
             <Image
               src="/logo.webp"
               alt="Andhra Brahmin Home Own Manufacturing Food Items"
               fill
-              className="scale-178 object-cover"
+              sizes="280px"
+              quality={90}
+              className="object-cover"
               priority
             />
           </span>

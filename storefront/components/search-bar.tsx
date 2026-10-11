@@ -7,6 +7,13 @@ import CatalogImage from "./catalog-image";
 import { searchProducts, type ProductCardData } from "@/lib/catalog";
 import { formatINR } from "@/lib/format";
 
+// Live-search results by lowercased term, for the life of the page — retyping
+// or backspacing through a term skips the Supabase round-trip. Cleared on
+// reload, so catalog edits show up on the next visit. Capped so a long session
+// can't grow it unbounded.
+const liveCache = new Map<string, ProductCardData[]>();
+const LIVE_CACHE_MAX = 50;
+
 const POPULAR = ["avakaya", "karam podi", "nimmakaya", "snack"];
 
 export default function SearchBar({
@@ -59,8 +66,14 @@ export default function SearchBar({
     if (term.length < 2) return;
     const id = ++requestRef.current;
     const timer = setTimeout(() => {
-      searchProducts(term, { limit: 6 })
+      const key = term.toLowerCase();
+      const hit = liveCache.get(key);
+      (hit ? Promise.resolve(hit) : searchProducts(term, { limit: 6 }))
         .then((found) => {
+          if (liveCache.size >= LIVE_CACHE_MAX) {
+            liveCache.delete(liveCache.keys().next().value!);
+          }
+          liveCache.set(key, found);
           if (requestRef.current !== id) return;
           setFetched({ term, results: found });
           setActive(-1);
