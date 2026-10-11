@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 
@@ -6,9 +8,12 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 // Branded social-share card, rendered on the fly so every page has a preview
-// even before product photography exists. Latin-only (ImageResponse default
+// even before product photography exists. Logo is read from app/icon.png. Latin-only (ImageResponse default
 // font has no Telugu glyphs).
-export default function OgImage() {
+export default async function OgImage() {
+  const logo = await readFile(join(process.cwd(), "app/icon.png"));
+  const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
@@ -24,21 +29,8 @@ export default function OgImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-          <div
-            style={{
-              width: 64,
-              height: 64,
-              borderRadius: 999,
-              background: "#c67139",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#f5ead8",
-              fontSize: 34,
-            }}
-          >
-            🌿
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={logoSrc} width={96} height={96} alt="" />
           <div style={{ fontSize: 30, fontWeight: 700, color: "#201e1d" }}>
             {SITE_NAME}
           </div>
