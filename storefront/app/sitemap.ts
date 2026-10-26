@@ -10,16 +10,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getCategories(),
     getProductSitemapEntries(),
   ]);
-  // The three static routes have no single DB record to date them by —
-  // "now" is the least wrong choice there. Category/product routes do have
-  // real updated_at columns, so those drive their own lastModified instead
-  // of everything sharing one build-time stamp.
-  const now = new Date();
+  // lastmod must only move when content does — a timestamp that is "now" on
+  // every fetch teaches crawlers to ignore it. Listing pages take the newest
+  // updated_at of what they show; /about is static copy, so it carries the
+  // date it last changed (bump when editing app/about).
+  const newest = (dates: string[]) =>
+    new Date(Math.max(...dates.map((d) => new Date(d).getTime())));
+  const productsUpdated = products.length
+    ? newest(products.map((p) => p.updatedAt))
+    : undefined;
+  const homeUpdated =
+    products.length || categories.length
+      ? newest([
+          ...products.map((p) => p.updatedAt),
+          ...categories.map((c) => c.updated_at),
+        ])
+      : undefined;
+  const ABOUT_LAST_MODIFIED = new Date("2026-09-26");
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"), lastModified: now, changeFrequency: "weekly", priority: 1 },
-    { url: absoluteUrl("/products"), lastModified: now, changeFrequency: "daily", priority: 0.9 },
-    { url: absoluteUrl("/about"), lastModified: now, changeFrequency: "yearly", priority: 0.5 },
+    { url: absoluteUrl("/"), lastModified: homeUpdated, changeFrequency: "weekly", priority: 1 },
+    { url: absoluteUrl("/products"), lastModified: productsUpdated, changeFrequency: "daily", priority: 0.9 },
+    { url: absoluteUrl("/about"), lastModified: ABOUT_LAST_MODIFIED, changeFrequency: "yearly", priority: 0.5 },
   ];
 
   const categoryRoutes: MetadataRoute.Sitemap = categories.map((c) => ({
