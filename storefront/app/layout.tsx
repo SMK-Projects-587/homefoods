@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { preconnect } from "react-dom";
+import { Analytics } from "@vercel/analytics/next";
 import { Fraunces, Figtree, Noto_Sans_Telugu } from "next/font/google";
 import "./globals.css";
 import { getCategories } from "@/lib/catalog.server";
@@ -162,6 +163,12 @@ export default async function RootLayout({
             <CheckoutConfirmDialog />
           </SearchProvider>
         </CartProvider>
+        {/* Reads usePathname() internally, so it needs its own Suspense
+            boundary under Cache Components. Script and beacon are served
+            same-origin from /_vercel/insights, so the CSP needs no change. */}
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
       </body>
     </html>
   );
